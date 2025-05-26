@@ -1,0 +1,31 @@
+body {
+  font-family: sans-serif;
+  background: #fff7ed;
+  margin: 1rem;
+}
+
+.filters {
+  margin-bottom: 1rem;
+}
+
+#pizza-container {
+  width: 800px;
+  margin: 0 auto;
+}
+
+#pizza-filter {
+  width: 200px;
+}
+
+#tooltip {
+  position: absolute;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 10;
+}
