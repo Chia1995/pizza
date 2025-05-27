@@ -201,4 +201,29 @@ function drawDots() {
     .on('mouseleave', () => {
       tooltip.style('opacity', 0);
     });
+
+    function createFloatingDots() {
+      const startscreen = document.querySelector('.startscreen');
+      const numDots = 120;
+    
+      for (let i = 0; i < numDots; i++) {
+        const dot = document.createElement('div');
+        dot.classList.add('floating-dot');
+    
+        const colorKeys = Object.keys(categoryColors);
+        const category = colorKeys[Math.floor(Math.random() * colorKeys.length)];
+        dot.style.backgroundColor = categoryColors[category];
+    
+        dot.style.left = `${Math.random() * 100}%`;
+        dot.style.top = `${Math.random() * 100}%`;
+        dot.style.animationDuration = `${4 + Math.random() * 4}s`;
+        dot.style.animationDelay = `${Math.random() * 4}s`;
+    
+        startscreen.appendChild(dot);
+      }
+    }
+    
+    // 📦 On page load: just create floating dots
+    createFloatingDots();
+    
 }
