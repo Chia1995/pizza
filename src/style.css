@@ -70,7 +70,7 @@ a:hover {
   font-weight: 400;
   font-style: normal;
   color: #5d2720;
-  margin-left: 5rem;
+  margin-left: 20vw;
 }
 
 .dropdown {
@@ -79,11 +79,11 @@ a:hover {
   margin: 2rem;
 }
 
-#category-btn {
+#category-btn, #pizza-btn {
   font-family: "aptly", sans-serif;
   background-color: #fff;
   color: #5d2720;
-  padding: 10px 20px;
+  padding: 20px 80px;
   font-size: 1rem;
   border: 2px solid #5d2720;
   cursor: pointer;
@@ -93,12 +93,11 @@ a:hover {
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #fff7ed;
-  min-width: 220px;
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+  background-color: #fff;
+  border: 2px solid #5d2720;
+  min-width: 320px;
   padding: 12px;
   z-index: 1;
-  border: 1px solid #ccc;
   border-radius: 4px;
 }
 
@@ -111,12 +110,21 @@ a:hover {
 }
 
 .dropdown-content input[type="checkbox"] {
-  margin-right: 0.5rem;
+  margin-right: 1rem;
 }
 
 .dropdown-content.show {
   display: block;
 }
+
+.pizza-checkbox {
+  font-family: "aptly", sans-serif;
+  font-size: 1rem;
+}
+.pizza-checkbox[data-category="Veggie"] { color: #2ecc71; }
+.pizza-checkbox[data-category="Chicken"] { color: #ef5777; }
+.pizza-checkbox[data-category="Supreme"] { color: #DB5461; }
+.pizza-checkbox[data-category="Classic"] { color: #fff200; }
 
 
 
