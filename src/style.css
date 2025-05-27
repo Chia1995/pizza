@@ -1,23 +1,98 @@
+@import url("https://use.typekit.net/rbq5ghm.css");
+
 body {
-  font-family: sans-serif;
-  background: #fff7ed;
-  margin: 1rem;
+  background: #ff9239;
+  margin: 0;
 }
 
+.startscreen {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.center-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+h1 {
+  font-family: "beastly", sans-serif;
+  font-size: 8rem;
+  line-height: 6rem;
+  color: #ffffff;
+  margin: 0;
+}
+
+h2 {
+  font-family: "manicotti", sans-serif;
+  font-size: 20rem;
+  line-height: 16rem;
+  color: #ffffff;
+  font-weight: 400;
+  font-style: normal;
+  margin:0;
+}
+
+p {
+  font-family: "aptly", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1rem;
+}
+
+a {
+  margin-top: 1rem;
+  font-family: "aptly", sans-serif;
+  color: #fff;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1rem;
+  text-decoration: none;
+  z-index: 10;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #fff;
+}
+
+
 .filters {
-  margin-bottom: 1rem;
+  font-family: "aptly-rough", sans-serif;
+  font-size: 2rem;
+  font-weight: 400;
+  font-style: normal;
+  color: #5d2720;
+  margin-left: 5rem;
 }
 
 #pizza-container {
   width: 800px;
   margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 #pizza-filter {
   width: 200px;
+  font-family: "aptly", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 #tooltip {
+  font-family: "aptly", sans-serif;
+  font-weight: 400;
+  font-style: normal;
   position: absolute;
   background: rgba(255, 255, 255, 0.8);
   color: #000;

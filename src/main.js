@@ -1,18 +1,17 @@
 import * as d3 from 'd3';
 
-// SVG setup
 const svg = d3.select('#pizza-viz');
-const width = +svg.attr('width');
-const height = +svg.attr('height');
+const svgNode = svg.node();
+const width = svgNode.clientWidth;
+const height = svgNode.clientHeight;
+
 
 const centerX = width / 2;
 const centerY = height / 2;
 const radius = Math.min(width, height) / 2;
 
-// Tooltip
 const tooltip = d3.select('#tooltip');
 
-// Category colors
 const categoryColors = {
   'Veggie': '#2ecc71',
   'Chicken': '#ef5777',
@@ -23,55 +22,55 @@ const colorScale = d => categoryColors[d] || '#ccc';
 
 let globalData = [];
 
-// Load CSV data
 d3.csv('/data/pizza_sales.csv').then(data => {
   globalData = data;
 
-  // Draw pizza base
   svg.append('circle')
     .attr('cx', centerX)
     .attr('cy', centerY)
     .attr('r', radius)
     .attr('fill', '#dfc99a');
 
-  // Populate category dropdown
   const categories = Array.from(new Set(data.map(d => d.pizza_category))).sort();
-  const categorySelect = document.getElementById('category-select');
+  const select = document.getElementById('category-select');
   categories.forEach(cat => {
     const opt = document.createElement('option');
     opt.value = cat;
     opt.textContent = cat;
-    categorySelect.appendChild(opt);
+    select.appendChild(opt);
   });
 
-  // Add change listener
-  categorySelect.addEventListener('change', drawDots);
+  select.addEventListener('change', () => {
+    drawDots(select.value);
+  });
 
-  // Initial draw
-  drawDots();
+  drawDots('all');
 });
 
-function drawDots() {
+function drawDots(selectedCategory) {
   svg.selectAll('circle.pizza-dot').remove();
 
-  const category = document.getElementById('category-select').value;
   const parseDate = d3.timeParse('%m/%d/%Y');
 
   const filtered = globalData
-    .filter(d => category === 'all' || d.pizza_category === category)
+    .filter(d => selectedCategory === 'all' || d.pizza_category === selectedCategory)
     .map(d => {
-      const pd = parseDate(d.order_date);
-      return pd ? { ...d, parsedDate: pd } : null;
+      const parsedDate = parseDate(d.order_date);
+      return parsedDate ? { ...d, parsedDate } : null;
     })
     .filter(d => d);
 
-  const dots = filtered.map(d => {
-    const m = d.parsedDate.getMonth();
-    const start = (m / 12) * 2 * Math.PI;
-    const end = ((m + 1) / 12) * 2 * Math.PI;
+  const sample = d3.shuffle(filtered).slice(0, 24000); // Pick up to 100 random points
+
+  const dots = sample.map(d => {
+    const month = d.parsedDate.getMonth();
+    const start = (month / 12) * 2 * Math.PI;
+    const end = ((month + 1) / 12) * 2 * Math.PI;
     const offset = -Math.PI / 2;
+
     const angle = start + Math.random() * (end - start) + offset;
     const r = Math.sqrt(Math.random()) * radius * 0.95;
+
     return {
       ...d,
       cx: centerX + r * Math.cos(angle),

@@ -1,27 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Pizza sales visualization</title>
-  <link rel="stylesheet" href="/src/style.css" />
-
+    <meta charset="UTF-8" />
+    <title>Pizza sales visualization</title>
+    <link rel="stylesheet" href="/src/style.css" />
 </head>
+
 <body>
-  <h1>Pizza sales visualization</h1>
+    <div class="startscreen">
+        <a href="https://www.kaggle.com/datasets/nextmillionaire/pizza-sales-dataset" target="_blank">
+            Data source from Kaggle
+        </a>
 
-  <div class="filters">
-    <label for="category-select">Filter by Category:</label>
-    <select id="category-select">
-      <option value="all">All Categories</option>
-    </select>
-  </div>
+        <div class="center-content">
+            <h1>All about</h1>
+            <h2>PIZZA</h2>
+            <p>Data visualization from Ecem Tasali, Milena Biasova, Christina Gamperl</p>
+        </div>
+    </div>
 
-  <div id="pizza-container">
-    <svg id="pizza-viz" width="600" height="600"></svg>
-  </div>
+    <div class="filters">
+        <label for="category-select">Filter by category:</label>
+        <select id="category-select">
+            <option value="all">All categories</option>
+        </select>
+    </div>
 
-  <div id="tooltip"></div>
+    <div id="pizza-container">
+        <svg id="pizza-viz" width="900" height="900"></svg>
+    </div>
 
-  <script type="module" src="/src/main.js"></script>
+    <div id="tooltip"></div>
+
+    <script type="module" src="/src/main.js"></script>
 </body>
+
 </html>
