@@ -79,7 +79,7 @@ a:hover {
   margin: 2rem;
 }
 
-#dropdown-btn {
+#category-btn {
   font-family: "aptly", sans-serif;
   background-color: #fff;
   color: #5d2720;
@@ -110,9 +110,14 @@ a:hover {
   color: #5d2720;
 }
 
-.dropdown.show .dropdown-content {
+.dropdown-content input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.dropdown-content.show {
   display: block;
 }
+
 
 
 #pizza-container {

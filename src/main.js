@@ -19,10 +19,9 @@ const colorScale = d => categoryColors[d] || '#ccc';
 
 let globalData = [];
 
-document.getElementById('dropdown-btn')?.addEventListener('click', () => {
-  document.querySelector('.dropdown')?.classList.toggle('show');
+document.getElementById('category-btn')?.addEventListener('click', () => {
+  document.getElementById('category-checkboxes')?.classList.toggle('show');
 });
-
 
 d3.csv('/data/pizza_sales.csv').then(data => {
   globalData = data;
@@ -36,7 +35,7 @@ d3.csv('/data/pizza_sales.csv').then(data => {
   const categoryContainer = document.getElementById('category-checkboxes');
   const categories = Array.from(new Set(data.map(d => d.pizza_category))).sort();
 
-  // 🔘 Create "All" checkbox
+  // "All" checkbox
   const allLabel = document.createElement('label');
   const allCheckbox = document.createElement('input');
   allCheckbox.type = 'checkbox';
@@ -44,9 +43,8 @@ d3.csv('/data/pizza_sales.csv').then(data => {
   allCheckbox.checked = true;
 
   allCheckbox.addEventListener('change', () => {
-    const checked = allCheckbox.checked;
     categoryContainer.querySelectorAll('input[type="checkbox"]:not([value="all"])')
-      .forEach(cb => cb.checked = false); // uncheck all categories if "All" is selected
+      .forEach(cb => cb.checked = false);
     drawDots();
   });
 
@@ -54,7 +52,7 @@ d3.csv('/data/pizza_sales.csv').then(data => {
   allLabel.append(' All');
   categoryContainer.appendChild(allLabel);
 
-  // ✅ Create category checkboxes (unchecked by default)
+  // Category checkboxes
   categories.forEach(cat => {
     const label = document.createElement('label');
     const checkbox = document.createElement('input');
@@ -63,7 +61,6 @@ d3.csv('/data/pizza_sales.csv').then(data => {
     checkbox.checked = false;
 
     checkbox.addEventListener('change', () => {
-      // If any category is selected, uncheck "All"
       allCheckbox.checked = false;
       drawDots();
     });
@@ -80,12 +77,14 @@ function drawDots() {
   svg.selectAll('circle.pizza-dot').remove();
   const parseDate = d3.timeParse('%m/%d/%Y');
 
-  const checkboxes = document.querySelectorAll('#category-checkboxes input[type="checkbox"]:not([value="all"])');
-  const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-  const allSelected = document.querySelector('#category-checkboxes input[value="all"]').checked;
+  const selectedCategories = Array.from(
+    document.querySelectorAll('#category-checkboxes input[type="checkbox"]:not([value="all"]):checked')
+  ).map(cb => cb.value);
+
+  const allSelected = document.querySelector('#category-checkboxes input[value="all"]')?.checked;
 
   const filtered = globalData
-    .filter(d => allSelected || selected.includes(d.pizza_category))
+    .filter(d => allSelected || selectedCategories.includes(d.pizza_category))
     .map(d => {
       const parsedDate = parseDate(d.order_date);
       return parsedDate ? { ...d, parsedDate } : null;
