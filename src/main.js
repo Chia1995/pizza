@@ -9,10 +9,10 @@ const centerX = width / 2;
 const centerY = height / 2;
 const radius = Math.min(width, height) / 2;
 
-// Tooltip div
+// Tooltip
 const tooltip = d3.select('#tooltip');
 
-// Color mapping by category
+// Category colors
 const categoryColors = {
   'Veggie': '#2ecc71',
   'Chicken': '#ef5777',
@@ -27,9 +27,10 @@ let globalData = [];
 d3.csv('/data/pizza_sales.csv').then(data => {
   globalData = data;
 
-  // Draw static pizza base
+  // Draw pizza base
   svg.append('circle')
-    .attr('cx', centerX).attr('cy', centerY)
+    .attr('cx', centerX)
+    .attr('cy', centerY)
     .attr('r', radius)
     .attr('fill', '#dfc99a');
 
@@ -38,67 +39,46 @@ d3.csv('/data/pizza_sales.csv').then(data => {
   const categorySelect = document.getElementById('category-select');
   categories.forEach(cat => {
     const opt = document.createElement('option');
-    opt.value = cat; opt.textContent = cat;
+    opt.value = cat;
+    opt.textContent = cat;
     categorySelect.appendChild(opt);
   });
 
-  // Populate pizza-name multi-select once
-  const uniquePizzas = Array.from(new Set(data.map(d => d.pizza_name))).sort();
-  const pizzaSelect = document.getElementById('pizza-filter');
-  uniquePizzas.forEach(name => {
-    const opt = document.createElement('option');
-    opt.value = name; opt.textContent = name;
-    pizzaSelect.appendChild(opt);
-  });
-
-  // Wire up both filters to redraw
+  // Add change listener
   categorySelect.addEventListener('change', drawDots);
-  pizzaSelect.addEventListener('change', drawDots);
 
   // Initial draw
   drawDots();
 });
 
 function drawDots() {
-  // Clear old dots
   svg.selectAll('circle.pizza-dot').remove();
 
-  // Read filter values
   const category = document.getElementById('category-select').value;
-  const pizzaSelect = document.getElementById('pizza-filter');
-  const selectedPizzas = Array.from(pizzaSelect.selectedOptions)
-                              .map(o => o.value);
-
-  // Parse dates
   const parseDate = d3.timeParse('%m/%d/%Y');
 
-  // Filter data
   const filtered = globalData
     .filter(d => category === 'all' || d.pizza_category === category)
-    .filter(d => selectedPizzas.length === 0 || selectedPizzas.includes(d.pizza_name));
-
-  // Map each sale to a dot in its month slice
-  const dots = filtered
     .map(d => {
       const pd = parseDate(d.order_date);
       return pd ? { ...d, parsedDate: pd } : null;
     })
-    .filter(d => d)
-    .map(d => {
-      const m = d.parsedDate.getMonth(); // 0–11
-      const start = (m / 12) * 2 * Math.PI;
-      const end   = ((m + 1) / 12) * 2 * Math.PI;
-      const offset = -Math.PI/2; // start at top
-      const angle = start + Math.random() * (end - start) + offset;
-      const r = Math.sqrt(Math.random()) * radius * 0.95;
-      return {
-        ...d,
-        cx: centerX + r * Math.cos(angle),
-        cy: centerY + r * Math.sin(angle)
-      };
-    });
+    .filter(d => d);
 
-  // Draw dots
+  const dots = filtered.map(d => {
+    const m = d.parsedDate.getMonth();
+    const start = (m / 12) * 2 * Math.PI;
+    const end = ((m + 1) / 12) * 2 * Math.PI;
+    const offset = -Math.PI / 2;
+    const angle = start + Math.random() * (end - start) + offset;
+    const r = Math.sqrt(Math.random()) * radius * 0.95;
+    return {
+      ...d,
+      cx: centerX + r * Math.cos(angle),
+      cy: centerY + r * Math.sin(angle)
+    };
+  });
+
   svg.selectAll('circle.pizza-dot')
     .data(dots)
     .enter()
