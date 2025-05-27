@@ -5,7 +5,6 @@ const svgNode = svg.node();
 const width = svgNode.clientWidth;
 const height = svgNode.clientHeight;
 
-
 const centerX = width / 2;
 const centerY = height / 2;
 const radius = Math.min(width, height) / 2;
@@ -31,36 +30,47 @@ d3.csv('/data/pizza_sales.csv').then(data => {
     .attr('r', radius)
     .attr('fill', '#dfc99a');
 
+  // ✅ Create checkboxes
+  const categoryContainer = document.getElementById('category-checkboxes');
   const categories = Array.from(new Set(data.map(d => d.pizza_category))).sort();
-  const select = document.getElementById('category-select');
+
   categories.forEach(cat => {
-    const opt = document.createElement('option');
-    opt.value = cat;
-    opt.textContent = cat;
-    select.appendChild(opt);
+    const label = document.createElement('label');
+    label.style.marginRight = '1rem';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = cat;
+    checkbox.checked = true;
+
+    checkbox.addEventListener('change', drawDots);
+
+    label.appendChild(checkbox);
+    label.append(` ${cat}`);
+    categoryContainer.appendChild(label);
   });
 
-  select.addEventListener('change', () => {
-    drawDots(select.value);
-  });
-
-  drawDots('all');
+  drawDots();
 });
 
-function drawDots(selectedCategory) {
+function drawDots() {
   svg.selectAll('circle.pizza-dot').remove();
 
   const parseDate = d3.timeParse('%m/%d/%Y');
 
+  const selectedCategories = Array.from(
+    document.querySelectorAll('#category-checkboxes input[type="checkbox"]:checked')
+  ).map(cb => cb.value);
+
   const filtered = globalData
-    .filter(d => selectedCategory === 'all' || d.pizza_category === selectedCategory)
+    .filter(d => selectedCategories.includes(d.pizza_category))
     .map(d => {
       const parsedDate = parseDate(d.order_date);
       return parsedDate ? { ...d, parsedDate } : null;
     })
     .filter(d => d);
 
-  const sample = d3.shuffle(filtered).slice(0, 24000); // Pick up to 100 random points
+  const sample = d3.shuffle(filtered).slice(0, 24000);
 
   const dots = sample.map(d => {
     const month = d.parsedDate.getMonth();
