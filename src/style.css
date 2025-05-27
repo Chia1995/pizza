@@ -73,6 +73,48 @@ a:hover {
   margin-left: 5rem;
 }
 
+.dropdown {
+  position: relative;
+  display: inline-block;
+  margin: 2rem;
+}
+
+#dropdown-btn {
+  font-family: "aptly", sans-serif;
+  background-color: #fff;
+  color: #5d2720;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: 2px solid #5d2720;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #fff7ed;
+  min-width: 220px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+  padding: 12px;
+  z-index: 1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.dropdown-content label {
+  display: block;
+  font-family: "aptly", sans-serif;
+  font-size: 1rem;
+  margin: 4px 0;
+  color: #5d2720;
+}
+
+.dropdown.show .dropdown-content {
+  display: block;
+}
+
+
 #pizza-container {
   width: 800px;
   margin: 0 auto;

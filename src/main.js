@@ -1,10 +1,8 @@
 import * as d3 from 'd3';
 
 const svg = d3.select('#pizza-viz');
-const svgNode = svg.node();
-const width = svgNode.clientWidth;
-const height = svgNode.clientHeight;
-
+const width = svg.node().clientWidth;
+const height = svg.node().clientHeight;
 const centerX = width / 2;
 const centerY = height / 2;
 const radius = Math.min(width, height) / 2;
@@ -21,6 +19,16 @@ const colorScale = d => categoryColors[d] || '#ccc';
 
 let globalData = [];
 
+document.getElementById('dropdown-btn')?.addEventListener('click', () => {
+  document.querySelector('.dropdown')?.classList.toggle('show');
+});
+
+window.addEventListener('click', e => {
+  if (!document.querySelector('.dropdown')?.contains(e.target)) {
+    document.querySelector('.dropdown')?.classList.remove('show');
+  }
+});
+
 d3.csv('/data/pizza_sales.csv').then(data => {
   globalData = data;
 
@@ -30,20 +38,40 @@ d3.csv('/data/pizza_sales.csv').then(data => {
     .attr('r', radius)
     .attr('fill', '#dfc99a');
 
-  // ✅ Create checkboxes
   const categoryContainer = document.getElementById('category-checkboxes');
   const categories = Array.from(new Set(data.map(d => d.pizza_category))).sort();
 
+  // 🔘 Create "All" checkbox
+  const allLabel = document.createElement('label');
+  const allCheckbox = document.createElement('input');
+  allCheckbox.type = 'checkbox';
+  allCheckbox.value = 'all';
+  allCheckbox.checked = true;
+
+  allCheckbox.addEventListener('change', () => {
+    const checked = allCheckbox.checked;
+    categoryContainer.querySelectorAll('input[type="checkbox"]:not([value="all"])')
+      .forEach(cb => cb.checked = false); // uncheck all categories if "All" is selected
+    drawDots();
+  });
+
+  allLabel.appendChild(allCheckbox);
+  allLabel.append(' All');
+  categoryContainer.appendChild(allLabel);
+
+  // ✅ Create category checkboxes (unchecked by default)
   categories.forEach(cat => {
     const label = document.createElement('label');
-    label.style.marginRight = '1rem';
-
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = cat;
-    checkbox.checked = true;
+    checkbox.checked = false;
 
-    checkbox.addEventListener('change', drawDots);
+    checkbox.addEventListener('change', () => {
+      // If any category is selected, uncheck "All"
+      allCheckbox.checked = false;
+      drawDots();
+    });
 
     label.appendChild(checkbox);
     label.append(` ${cat}`);
@@ -55,15 +83,14 @@ d3.csv('/data/pizza_sales.csv').then(data => {
 
 function drawDots() {
   svg.selectAll('circle.pizza-dot').remove();
-
   const parseDate = d3.timeParse('%m/%d/%Y');
 
-  const selectedCategories = Array.from(
-    document.querySelectorAll('#category-checkboxes input[type="checkbox"]:checked')
-  ).map(cb => cb.value);
+  const checkboxes = document.querySelectorAll('#category-checkboxes input[type="checkbox"]:not([value="all"])');
+  const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+  const allSelected = document.querySelector('#category-checkboxes input[value="all"]').checked;
 
   const filtered = globalData
-    .filter(d => selectedCategories.includes(d.pizza_category))
+    .filter(d => allSelected || selected.includes(d.pizza_category))
     .map(d => {
       const parsedDate = parseDate(d.order_date);
       return parsedDate ? { ...d, parsedDate } : null;
@@ -77,7 +104,6 @@ function drawDots() {
     const start = (month / 12) * 2 * Math.PI;
     const end = ((month + 1) / 12) * 2 * Math.PI;
     const offset = -Math.PI / 2;
-
     const angle = start + Math.random() * (end - start) + offset;
     const r = Math.sqrt(Math.random()) * radius * 0.95;
 
