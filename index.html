@@ -8,18 +8,32 @@
 </head>
 
 <body>
-    <div class="startscreen">
-        <a href="https://www.kaggle.com/datasets/nextmillionaire/pizza-sales-dataset" target="_blank">
-            Data source from Kaggle
-        </a>
+    <div class="floating-background">
+        <div class="startscreen">
+            <a href="https://www.kaggle.com/datasets/nextmillionaire/pizza-sales-dataset" target="_blank">
+                Data source from Kaggle
+            </a>
 
-        <div class="center-content">
-            <h1>All about</h1>
-            <h2>PIZZA</h2>
-            <p>Data visualization from Ecem Tasali, Milena Biasova, Christina Gamperl</p>
+            <div class="center-content">
+                <h1>All about</h1>
+                <h2>PIZZA</h2>
+                <p>Data visualization from Ecem Tasali, Milena Biasova, Christina Gamperl</p>
+            </div>
+        </div>
+
+        <div class="secondscreen">
+            <p class="textsecondscreen">
+                Ever wondered how many pizzas are sold, and when?
+                <br><br>The next playful visualization shows you
+                every single pizza sale – one dot at a time.<br><br>
+
+                Use the filter to explore by category. Click around, hover, and discover tasty trends.
+
+                Hungry for more?
+                <br><br>In the next visualization, you’ll find out which pizzas are true bestsellers.
+
         </div>
     </div>
-
 
     <div class="filters">
         <div class="dropdown">
@@ -30,9 +44,9 @@
         <div class="dropdown">
             <button id="pizza-btn">Filter by pizza ▾</button>
             <div id="pizza-checkboxes" class="dropdown-content"></div>
-          </div>
+        </div>
     </div>
-      
+
     <div id="pizza-container">
         <svg id="pizza-viz" width="900" height="900"></svg>
     </div>

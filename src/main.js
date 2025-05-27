@@ -203,7 +203,7 @@ function drawDots() {
     });
 
     function createFloatingDots() {
-      const startscreen = document.querySelector('.startscreen');
+      const bg = document.querySelector('.floating-background');
       const numDots = 120;
     
       for (let i = 0; i < numDots; i++) {
@@ -215,15 +215,33 @@ function drawDots() {
         dot.style.backgroundColor = categoryColors[category];
     
         dot.style.left = `${Math.random() * 100}%`;
-        dot.style.top = `${Math.random() * 100}%`;
+        dot.style.top = `${Math.random() * 200}%`; // 🚀 extend down into secondscreen
         dot.style.animationDuration = `${4 + Math.random() * 4}s`;
         dot.style.animationDelay = `${Math.random() * 4}s`;
     
-        startscreen.appendChild(dot);
+        bg.appendChild(dot);
       }
     }
     
+    
     // 📦 On page load: just create floating dots
     createFloatingDots();
+
+    const secondScreen = document.querySelector('.secondscreen');
+
+if (secondScreen) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        secondScreen.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.3
+  });
+
+  observer.observe(secondScreen);
+}
+
     
 }
