@@ -23,11 +23,6 @@ document.getElementById('dropdown-btn')?.addEventListener('click', () => {
   document.querySelector('.dropdown')?.classList.toggle('show');
 });
 
-window.addEventListener('click', e => {
-  if (!document.querySelector('.dropdown')?.contains(e.target)) {
-    document.querySelector('.dropdown')?.classList.remove('show');
-  }
-});
 
 d3.csv('/data/pizza_sales.csv').then(data => {
   globalData = data;
