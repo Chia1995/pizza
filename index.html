@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pizza Sales Visualization</title>
+  <link rel="stylesheet" href="/src/style.css" />
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    .filters {
+      margin-bottom: 20px;
+    }
+
+    select {
+      margin-left: 10px;
+      margin-right: 20px;
+    }
+
+    #tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      pointer-events: none;
+      opacity: 0;
+      font-size: 12px;
+      transition: opacity 0.2s ease;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pizza Sales Visualization</h1>
+
+  <div class="filters">
+    <label for="category-select">Filter by Category:</label>
+    <select id="category-select">
+      <option value="all">All Categories</option>
+    </select>
+
+    <label for="pizza-filter">Filter by Pizza:</label>
+    <select id="pizza-filter" multiple size="6"></select>
+  </div>
+
+  <div id="pizza-container">
+    <svg id="pizza-viz" width="600" height="600"></svg>
+  </div>
+
+  <div id="tooltip"></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
