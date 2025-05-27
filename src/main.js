@@ -23,6 +23,10 @@ document.getElementById('category-btn')?.addEventListener('click', () => {
   document.getElementById('category-checkboxes')?.classList.toggle('show');
 });
 
+document.getElementById('pizza-btn')?.addEventListener('click', () => {
+  document.getElementById('pizza-checkboxes')?.classList.toggle('show');
+});
+
 d3.csv('/data/pizza_sales.csv').then(data => {
   globalData = data;
 
@@ -33,6 +37,7 @@ d3.csv('/data/pizza_sales.csv').then(data => {
     .attr('fill', '#dfc99a');
 
   const categoryContainer = document.getElementById('category-checkboxes');
+  const pizzaContainer = document.getElementById('pizza-checkboxes');
   const categories = Array.from(new Set(data.map(d => d.pizza_category))).sort();
 
   // "All" checkbox
@@ -45,6 +50,7 @@ d3.csv('/data/pizza_sales.csv').then(data => {
   allCheckbox.addEventListener('change', () => {
     categoryContainer.querySelectorAll('input[type="checkbox"]:not([value="all"])')
       .forEach(cb => cb.checked = false);
+    updatePizzaFilter(); // 🔁 rebuild pizza name filter
     drawDots();
   });
 
@@ -62,6 +68,7 @@ d3.csv('/data/pizza_sales.csv').then(data => {
 
     checkbox.addEventListener('change', () => {
       allCheckbox.checked = false;
+      updatePizzaFilter(); // 🔁 call here to update name filter immediately
       drawDots();
     });
 
@@ -70,7 +77,65 @@ d3.csv('/data/pizza_sales.csv').then(data => {
     categoryContainer.appendChild(label);
   });
 
+  updatePizzaFilter(); // initial build
   drawDots();
+
+  function updatePizzaFilter() {
+    pizzaContainer.innerHTML = '';
+  
+    const selectedCategories = Array.from(
+      document.querySelectorAll('#category-checkboxes input[type="checkbox"]:not([value="all"]):checked')
+    ).map(cb => cb.value);
+  
+    const allSelected = document.querySelector('#category-checkboxes input[value="all"]')?.checked;
+  
+    // Only show pizzas from selected categories (or all if "All" is selected)
+    const visiblePizzas = globalData.filter(d =>
+      allSelected || selectedCategories.includes(d.pizza_category)
+    );
+  
+    // Map: category → [pizza names...]
+    const categoryGroups = new Map();
+  
+    visiblePizzas.forEach(d => {
+      if (!categoryGroups.has(d.pizza_category)) {
+        categoryGroups.set(d.pizza_category, []);
+      }
+      if (!categoryGroups.get(d.pizza_category).includes(d.pizza_name)) {
+        categoryGroups.get(d.pizza_category).push(d.pizza_name);
+      }
+    });
+  
+    // Sort categories based on your defined order
+    const orderedCategories = Object.keys(categoryColors);
+  
+    orderedCategories.forEach(category => {
+      const pizzas = categoryGroups.get(category);
+      if (!pizzas) return;
+  
+      pizzas.sort(); // sort pizza names alphabetically within category
+  
+      pizzas.forEach(pizzaName => {
+        const label = document.createElement('label');
+        label.classList.add('pizza-checkbox');
+        label.dataset.category = category;
+  
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = pizzaName;
+        checkbox.checked = false;
+  
+        checkbox.addEventListener('change', () => {
+          drawDots();
+        });
+  
+        label.appendChild(checkbox);
+        label.append(` ${pizzaName}`);
+        pizzaContainer.appendChild(label);
+      });
+    });
+  }
+  
 });
 
 function drawDots() {
@@ -81,10 +146,15 @@ function drawDots() {
     document.querySelectorAll('#category-checkboxes input[type="checkbox"]:not([value="all"]):checked')
   ).map(cb => cb.value);
 
+  const selectedPizzaNames = Array.from(
+    document.querySelectorAll('#pizza-checkboxes input[type="checkbox"]:checked')
+  ).map(cb => cb.value);
+
   const allSelected = document.querySelector('#category-checkboxes input[value="all"]')?.checked;
 
   const filtered = globalData
     .filter(d => allSelected || selectedCategories.includes(d.pizza_category))
+    .filter(d => selectedPizzaNames.length === 0 || selectedPizzaNames.includes(d.pizza_name))
     .map(d => {
       const parsedDate = parseDate(d.order_date);
       return parsedDate ? { ...d, parsedDate } : null;
