@@ -50,7 +50,7 @@ d3.csv('/data/pizza_sales.csv').then(data => {
   allCheckbox.addEventListener('change', () => {
     categoryContainer.querySelectorAll('input[type="checkbox"]:not([value="all"])')
       .forEach(cb => cb.checked = false);
-    updatePizzaFilter(); // 🔁 rebuild pizza name filter
+    updatePizzaFilter();
     drawDots();
   });
 
@@ -68,7 +68,7 @@ d3.csv('/data/pizza_sales.csv').then(data => {
 
     checkbox.addEventListener('change', () => {
       allCheckbox.checked = false;
-      updatePizzaFilter(); // 🔁 call here to update name filter immediately
+      updatePizzaFilter(); 
       drawDots();
     });
 
@@ -77,7 +77,7 @@ d3.csv('/data/pizza_sales.csv').then(data => {
     categoryContainer.appendChild(label);
   });
 
-  updatePizzaFilter(); // initial build
+  updatePizzaFilter(); 
   drawDots();
 
   function updatePizzaFilter() {
@@ -106,7 +106,7 @@ d3.csv('/data/pizza_sales.csv').then(data => {
       }
     });
   
-    // Sort categories based on your defined order
+    // Sort categories based on defined order
     const orderedCategories = Object.keys(categoryColors);
   
     orderedCategories.forEach(category => {
@@ -224,7 +224,7 @@ function drawDots() {
     }
     
     
-    // 📦 On page load: just create floating dots
+    // create floating dots
     createFloatingDots();
 
     const secondScreen = document.querySelector('.secondscreen');
