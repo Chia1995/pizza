@@ -2,10 +2,10 @@ import * as d3 from 'd3';
 
 
 const categoryColors = {
-   'Veggie': '#038c0c',
-  'Chicken': '#3558e6',
-  'Supreme': '#b437d4',
-  'Classic': '#fa193e'
+  'Veggie': '#024702',
+  'Chicken': '#0b159c',
+  'Supreme': '#db0469',
+  'Classic': '#ba0707'
 };
 const colorScale = d => categoryColors[d] || '#ccc';
 

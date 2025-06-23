@@ -1,7 +1,7 @@
 @import url("https://use.typekit.net/rbq5ghm.css");
 
 body {
-  background: #ff9239;
+  background: #ee8834;
   margin: 0;
 }
 
@@ -45,6 +45,14 @@ body {
   flex-direction: column;
   align-items: center;
 }
+
+
+.resultsection {
+ height: 100vh;
+ margin-top: 10vh;
+ font-family: "aptly", sans-serif;
+}
+
 
 
 
@@ -97,7 +105,7 @@ body {
 }
 
 #pizza-buttons {
-    font-family: "aptly", sans-serif;
+  font-family: "aptly", sans-serif;
   font-weight: 400;
   font-style: normal;
   font-size: 1rem;
@@ -197,76 +205,96 @@ a:hover {
 .button-container {
   display: flex;
   justify-content: center;
-  margin-top: 3rem;
+  margin-top: 4rem;
 }
 
 
-.bn54 {
-  position: relative;
-  outline: none;
-  text-decoration: none;
-  border-radius: 50px;
-  display: block;
-  margin: 0 auto;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  text-transform: uppercase;
-  height: 90px;
-  width: 260px;
-  opacity: 1;
-  background-color: #ffffff;
-  border: 1px solid #ff9239;
 
-}
-
-.bn54 .bn54span {
+.button-56 {
   font-family: "aptly", sans-serif;
-  font-size: 1rem;
-  color: #ff9239;
+  align-self: center;
+  background-color: #ff9239ff;
+  font-size: 2rem;
+  background-image: none;
+  background-position: 0 90%;
+  background-repeat: repeat no-repeat;
+  background-size: 4px 3px;
+  border-radius: 15px 225px 255px 15px 15px 255px 225px 15px;
+  border-style: solid;
+  border-color: #ec6b01;
+  border-width: 2px;
+  box-shadow: rgba(255, 255, 255, 0.068) 15px 28px 25px -18px;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  outline: none;
+  padding: 1.5rem 3rem;      /* Big padding for bigger button */
+  min-width: 400px;          /* Ensures button is wide enough */
+  min-height: 100px;         /* Ensures button is tall enough */
+  text-decoration: none;
+  transition: all 235ms ease-in-out;
+  border-bottom-left-radius: 15px 255px;
+  border-bottom-right-radius: 225px 15px;
+  border-top-left-radius: 255px 15px;
+  border-top-right-radius: 15px 225px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
-.bn54:hover {
-  animation: bn54rotate 0.7s ease-in-out both;
+.button-56:hover {
+  box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
+  transform: translate3d(0, 2px, 0);
 }
 
-.bn54:hover .bn54span {
-  animation: bn54storm 0.7s ease-in-out both;
-  animation-delay: 0.06s;
+.button-56:focus {
+  box-shadow: rgba(138, 70, 70, 0.3) 2px 8px 4px -6px;
 }
 
-@keyframes bn54rotate {
-  0% {
-    transform: rotate(0deg) translate3d(0, 0, 0);
-  }
-  25% {
-    transform: rotate(3deg) translate3d(0, 0, 0);
-  }
-  50% {
-    transform: rotate(-3deg) translate3d(0, 0, 0);
-  }
-  75% {
-    transform: rotate(1deg) translate3d(0, 0, 0);
-  }
-  100% {
-    transform: rotate(0deg) translate3d(0, 0, 0);
-  }
+.result-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #ec6b01;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  gap: 2rem; /* optional: space between left and right */
 }
 
-@keyframes bn54storm {
-  0% {
-    transform: translate3d(0, 0, 0) translateZ(0);
-  }
-  25% {
-    transform: translate3d(4px, 0, 0) translateZ(0);
-  }
-  50% {
-    transform: translate3d(-3px, 0, 0) translateZ(0);
-  }
-  75% {
-    transform: translate3d(2px, 0, 0) translateZ(0);
-  }
-  100% {
-    transform: translate3d(0, 0, 0) translateZ(0);
-  }
+.result-info {
+  text-align: left;
+}
+
+.result-name {
+  font-family: "beastly", sans-serif;
+  font-size: 4rem;
+  line-height: 4rem;
+  margin: 0;
+  width: 50vw;
+}
+
+.result-rank {
+   font-family: "aptly", sans-serif;
+  font-size: 2rem;
+  line-height: 5rem;
+  
+  margin: 0;
+}
+
+.result-percentage {
+  text-align: right;
+}
+
+.percentage-value {
+  font-family: "beastly", sans-serif;
+  font-size: 6rem;
+  
+}
+
+.percentage-label {
+  font-family: "aptly", sans-serif;
+  font-size: 1.2rem;
+  line-height: 1rem;
+  
 }
