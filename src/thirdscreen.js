@@ -8,34 +8,68 @@ const categoryColors = {
 };
 
 export function buildThirdScreenChart() {
+  // Clear previous chart + tooltip + legend
   d3.select('.thirdscreen').selectAll('*').remove();
 
-  const margin = { top: 50, right: 30, bottom: 50, left: 60 };
-  const width = 800 - margin.left - margin.right;
-  const height = 400 - margin.top - margin.bottom;
-
-  const svg = d3.select('.thirdscreen')
-    .append('svg')
-    .attr('width', width + margin.left + margin.right)
-    .attr('height', height + margin.top + margin.bottom)
-    .append('g')
-    .attr('transform', `translate(${margin.left},${margin.top})`);
-
-  const tooltip = d3.select('.thirdscreen')
+  // Add legend container
+  const legendContainer = d3.select('.thirdscreen')
     .append('div')
-    .attr('class', 'tooltip')
-    .style('opacity', 0);
+    .attr('class', 'chart-legend')
+    .style('display', 'flex')
+    .style('justify-content', 'center')
+    .style('gap', '2rem')
+    .style('margin-bottom', '1rem');
 
   d3.csv('/data/pizza_sales.csv').then(data => {
     if (!window.selectedPizzas || window.selectedPizzas.length === 0) {
-      svg.append('text')
-        .attr('x', width / 2)
-        .attr('y', height / 2)
-        .attr('text-anchor', 'middle')
-        .attr('fill', '#fff')
+      d3.select('.thirdscreen')
+        .append('div')
+        .style('color', '#fff')
+        .style('text-align', 'center')
         .text('No pizzas selected');
       return;
     }
+
+    // Create legend items
+    window.selectedPizzas.forEach(pizzaName => {
+      const category = data.find(d => d.pizza_name === pizzaName)?.pizza_category;
+      legendContainer.append('div')
+        .style('display', 'flex')
+        .style('align-items', 'center')
+        .html(`
+          <span style="
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: ${categoryColors[category] || '#999'};
+            margin-right: 0.5rem;
+          "></span>
+          <span style="color: #fff; font-family: aptly, sans-serif;">${pizzaName}</span>
+        `);
+    });
+
+    const margin = { top: 50, right: 30, bottom: 120, left: 60 };
+    const width = 1200 - margin.left - margin.right;
+    const height = 800 - margin.top - margin.bottom;
+
+    const outerWidth = width + margin.left + margin.right;
+    const outerHeight = height + margin.top + margin.bottom;
+
+    const svgContainer = d3.select('.thirdscreen')
+      .append('svg')
+      .attr('viewBox', `0 0 ${outerWidth} ${outerHeight}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet')
+      .style('width', '100%')
+      .style('height', 'auto');
+
+    const svg = svgContainer.append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    const tooltip = d3.select('.thirdscreen')
+      .append('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0);
 
     const parseDate = d3.timeParse('%m/%d/%Y');
     data.forEach(d => {
@@ -65,9 +99,11 @@ export function buildThirdScreenChart() {
         d3.axisBottom(x)
           .tickValues(allMonths)
           .tickFormat(d3.timeFormat('%B'))
+          .tickSizeInner(15)
       )
       .selectAll("text")
       .attr("transform", "rotate(-45)")
+      .attr("dy", "1.5em")
       .style("text-anchor", "end");
 
     svg.append('g')
@@ -106,15 +142,13 @@ export function buildThirdScreenChart() {
         const category = data.find(p => p.pizza_name === d.name)?.pizza_category;
         return categoryColors[category] || '#999';
       })
-      .attr('stroke-width', 2)
+      .attr('stroke-width', 3)
       .attr('d', d => line(d.values))
       .on('click', function(event, d) {
         event.stopPropagation();
 
         const isSelected = d3.select(this.parentNode).classed('selected-group');
-
-        svg.selectAll('.line-group')
-          .classed('selected-group', false);
+        svg.selectAll('.line-group').classed('selected-group', false);
 
         if (!isSelected) {
           d3.select(this.parentNode).classed('selected-group', true);
@@ -130,9 +164,8 @@ export function buildThirdScreenChart() {
       .attr('class', 'dot')
       .attr('cx', d => x(d.date))
       .attr('cy', d => y(d.total))
-      .attr('r', 3)
-      .attr('fill', '#fff')
-      .attr('stroke', d => {
+      .attr('r', 8)
+      .attr('fill', d => {
         const pizza = lineData.find(l => l.values.includes(d));
         const category = data.find(p => p.pizza_name === pizza.name)?.pizza_category;
         return categoryColors[category] || '#999';
@@ -140,7 +173,7 @@ export function buildThirdScreenChart() {
       .on('mouseover', function(event, d) {
         const parentGroup = d3.select(this.parentNode);
         if (!svg.selectAll('.selected-group').empty() && !parentGroup.classed('selected-group')) {
-          return; // no tooltip for grayed-out
+          return;
         }
 
         const pizza = lineData.find(l => l.values.includes(d));
@@ -166,7 +199,6 @@ export function buildThirdScreenChart() {
         updateStyles();
       });
 
-    // Clicking empty space resets selection
     svg.on('click', () => {
       svg.selectAll('.line-group').classed('selected-group', false);
       tooltip.transition().duration(200).style('opacity', 0);
@@ -175,11 +207,9 @@ export function buildThirdScreenChart() {
 
     function updateStyles() {
       if (svg.selectAll('.selected-group').empty()) {
-        // No selection: all normal
         svg.selectAll('.pizza-line')
           .attr('stroke-opacity', 1)
           .attr('stroke-width', 2);
-
         svg.selectAll('.dot')
           .attr('opacity', 1);
       } else {
@@ -189,16 +219,14 @@ export function buildThirdScreenChart() {
             group.select('.pizza-line')
               .attr('stroke-opacity', 1)
               .attr('stroke-width', 4);
-
             group.selectAll('.dot')
               .attr('opacity', 1);
           } else {
             group.select('.pizza-line')
-              .attr('stroke-opacity', 0.1)
+              .attr('stroke-opacity', 0.3)
               .attr('stroke-width', 2);
-
             group.selectAll('.dot')
-              .attr('opacity', 0.1);
+              .attr('opacity', 0.3);
           }
         });
       }
