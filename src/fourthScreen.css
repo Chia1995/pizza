@@ -1,0 +1,111 @@
+/* Make sure there's no background */
+.fourthscreen {
+  background: transparent;
+  padding: 4rem 2rem;
+  font-family: 'aptly', sans-serif; /* assuming aptly is used elsewhere */
+}
+
+.flip-card {
+  background: none;
+  perspective: 1000px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.flip-card-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  backface-visibility: hidden;
+  border-radius: 25px;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.flip-card-front {
+  background: #ff9239;
+  color: #fff;
+  transform: rotateY(0deg);
+   background-image: none;
+  background-position: 0 90%;
+  background-repeat: repeat no-repeat;
+  background-size: 4px 3px;
+  border-radius: 15px 225px 255px 15px 15px 255px 225px 15px;
+  border-style: solid;
+  border-width: 2px;
+  box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
+  box-sizing: border-box;
+  cursor: pointer;
+
+  text-decoration: none;
+  border-bottom-left-radius: 15px 255px;
+  border-bottom-right-radius: 225px 15px;
+  border-top-left-radius: 255px 15px;
+  border-top-right-radius: 15px 225px;
+}
+
+.flip-card-back {
+  background: none;
+  color: #fff;
+  transform: rotateY(180deg);
+  cursor: pointer;
+}
+
+.custom-front-text {
+  font-size: 1.6rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.reveal-text {
+  font-size: 1.2rem;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.top-3-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.bar-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.bar-label {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #000;
+  width: 250px;
+  text-align: right;
+}
+
+.bar {
+  height: 45px;
+  border-radius: 25px;
+  color: #fff;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  font-size: 1.2rem;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+.bar-value {
+  white-space: nowrap;
+}
