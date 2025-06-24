@@ -1,0 +1,32 @@
+.thirdscreen svg {
+    display: block;
+    max-width: 100%;
+  }
+
+.thirdscreen {
+    height: 100vh;
+    padding: 2.5rem;
+    text-align: center;
+    font-family: "aptly", sans-serif;
+    color: #5d2720;
+    margin-bottom: 20%;
+    z-index: 1;
+  }
+  
+  
+  .tooltip {
+    position: absolute;
+    background: #fff;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: "aptly", sans-serif;
+    font-size: 0.9rem;
+    pointer-events: none;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    color: #000;
+  }
+  
+  
+  
+  

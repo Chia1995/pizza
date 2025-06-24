@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
+import { buildThirdScreenChart } from './thirdscreen.js';
 
-let selectedPizzas = [];
+
 
 const categoryColors = {
   'Veggie': '#024702',
@@ -20,6 +21,10 @@ d3.csv('/data/pizza_sales.csv').then(data => {
     d => d.pizza_name
   );
 
+  window.selectedPizzas = [];
+let selectedPizzas = window.selectedPizzas;
+
+
   // Sort descending by total
   pizzaSales.sort((a, b) => d3.descending(a[1].total, b[1].total));
 
@@ -36,8 +41,9 @@ d3.csv('/data/pizza_sales.csv').then(data => {
       .style('border-color', categoryColors[info.category] || '#41403e')
       .style('color', categoryColors[info.category] || '#41403e')
       .on('click', function () {
-        if (selectedPizzas.includes(pizzaName)) {
-          selectedPizzas = selectedPizzas.filter(p => p !== pizzaName);
+        const index = selectedPizzas.indexOf(pizzaName);
+        if (index > -1) {
+          selectedPizzas.splice(index, 1);
           d3.select(this)
             .classed('selected', false)
             .style('background-color', '#ff9239')
@@ -51,9 +57,11 @@ d3.csv('/data/pizza_sales.csv').then(data => {
               .style('color', '#fff');
           }
         }
-
+      
         d3.select('#complete-selection').attr('disabled', selectedPizzas.length === 0 ? true : null);
+        buildThirdScreenChart();
       });
+      
   });
 
   // Handle complete button
@@ -73,24 +81,23 @@ d3.csv('/data/pizza_sales.csv').then(data => {
     }
 
     return `
-  <div class="result-entry" style="color: ${categoryColors[entry[1].category] || '#ffffff'}">
-    <div class="result-info">
-      <div class="result-name">${name}</div>
-      <div class="result-rank">${rankText}</div>
-    </div>
-    <div class="result-percentage">
-      <div class="percentage-value">${percentage}%</div>
-      <div class="percentage-label">of all sales</div>
-    </div>
-  </div>
-`;
-
-
-
-
+      <div class="result-entry" style="color: ${categoryColors[entry[1].category] || '#ffffff'}">
+        <div class="result-info">
+          <div class="result-name">${name}</div>
+          <div class="result-rank">${rankText}</div>
+        </div>
+        <div class="result-percentage">
+          <div class="percentage-value">${percentage}%</div>
+          <div class="percentage-label">of all sales</div>
+        </div>
+      </div>
+    `;
   });
 
   d3.select('#selection-message').html(messages.join(''));
+
+
 });
+
 
 });
