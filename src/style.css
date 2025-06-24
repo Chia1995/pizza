@@ -1,7 +1,7 @@
 @import url("https://use.typekit.net/rbq5ghm.css");
 
 body {
-  background: #3957ff;
+  background: #ee8834;
   margin: 0;
 }
 
@@ -31,7 +31,7 @@ body {
 }
 
 .secondscreen {
-  height: 50vh;
+  height: 20vh;
   padding: 2.5rem;
   text-align: center;
   font-family: "aptly", sans-serif;
@@ -39,6 +39,21 @@ body {
   margin-bottom: 20%;
   z-index: 1;
 }
+
+.secondscreensbuttonsection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.resultsection {
+ height: 100vh;
+ margin-top: 10vh;
+ font-family: "aptly", sans-serif;
+}
+
+
 
 
 
@@ -48,6 +63,85 @@ body {
   max-width: 80vw;
   line-height: 1.2;
 }
+
+.button-55 {
+  font-family: "aptly", sans-serif;
+  align-self: center;
+  background-color: #ff9239ff;
+  background-image: none;
+  background-position: 0 90%;
+  background-repeat: repeat no-repeat;
+  background-size: 4px 3px;
+  border-radius: 15px 225px 255px 15px 15px 255px 225px 15px;
+  border-style: solid;
+  border-width: 2px;
+  box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
+  box-sizing: border-box;
+  color: #41403e;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 23px;
+  outline: none;
+  padding: .75rem;
+  text-decoration: none;
+  transition: all 235ms ease-in-out;
+  border-bottom-left-radius: 15px 255px;
+  border-bottom-right-radius: 225px 15px;
+  border-top-left-radius: 255px 15px;
+  border-top-right-radius: 15px 225px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-55:hover {
+  box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
+  transform: translate3d(0, 2px, 0);
+}
+
+.button-55:focus {
+  box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
+}
+
+#pizza-buttons {
+  font-family: "aptly", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1rem;
+  color: #ff9239;
+
+  display: grid;
+  gap: 0.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 5vw;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 900px) {
+  #pizza-buttons {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  #pizza-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 400px) {
+  #pizza-buttons {
+    grid-template-columns: 1fr;
+  }
+}
+
+#pizza-buttons button {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 
 .center-content {
   display: flex;
@@ -76,6 +170,14 @@ h2 {
   margin:0;
 }
 
+h3 {
+  font-family: "beastly", sans-serif;
+  font-size: 5rem;
+  line-height: 5rem;
+  color: #ffffff;
+  margin: 0;
+}
+
 p {
   font-family: "aptly", sans-serif;
   font-weight: 400;
@@ -100,100 +202,99 @@ a:hover {
   color: #fff;
 }
 
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 4rem;
+}
 
-.filters {
-  font-family: "aptly-rough", sans-serif;
+
+
+.button-56 {
+  font-family: "aptly", sans-serif;
+  align-self: center;
+  background-color: #ff9239ff;
   font-size: 2rem;
-  font-weight: 400;
-  font-style: normal;
-  color: #5d2720;
+  background-image: none;
+  background-position: 0 90%;
+  background-repeat: repeat no-repeat;
+  background-size: 4px 3px;
+  border-radius: 15px 225px 255px 15px 15px 255px 225px 15px;
+  border-style: solid;
+  border-color: #ec6b01;
+  border-width: 2px;
+  box-shadow: rgba(255, 255, 255, 0.068) 15px 28px 25px -18px;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  outline: none;
+  padding: 1.5rem 3rem;      /* Big padding for bigger button */
+  min-width: 400px;          /* Ensures button is wide enough */
+  min-height: 100px;         /* Ensures button is tall enough */
+  text-decoration: none;
+  transition: all 235ms ease-in-out;
+  border-bottom-left-radius: 15px 255px;
+  border-bottom-right-radius: 225px 15px;
+  border-top-left-radius: 255px 15px;
+  border-top-right-radius: 15px 225px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-56:hover {
+  box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
+  transform: translate3d(0, 2px, 0);
+}
+
+.button-56:focus {
+  box-shadow: rgba(138, 70, 70, 0.3) 2px 8px 4px -6px;
+}
+
+.result-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #ec6b01;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  gap: 2rem; /* optional: space between left and right */
+}
+
+.result-info {
+  text-align: left;
+}
+
+.result-name {
+  font-family: "beastly", sans-serif;
+  font-size: 4rem;
+  line-height: 4rem;
+  margin: 0;
+  width: 50vw;
+}
+
+.result-rank {
+   font-family: "aptly", sans-serif;
+  font-size: 2rem;
+  line-height: 5rem;
+  
+  margin: 0;
+}
+
+.result-percentage {
+  text-align: right;
+}
+
+.percentage-value {
+  font-family: "beastly", sans-serif;
+  font-size: 6rem;
   
 }
 
-.dropdown {
-  position: relative;
-  display: inline-block;
-  margin: 2rem;
-  margin-left: 20vw;
-}
-
-#category-btn, #pizza-btn {
+.percentage-label {
   font-family: "aptly", sans-serif;
-  background-color: #fff;
-  color: #5d2720;
-  padding: 20px 80px;
-  font-size: 1rem;
-  border: 2px solid #5d2720;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #fff;
-  border: 2px solid #5d2720;
-  min-width: 320px;
-  padding: 12px;
-  z-index: 1;
-  border-radius: 4px;
-}
-
-.dropdown-content label {
-  display: block;
-  font-family: "aptly", sans-serif;
-  font-size: 1rem;
-  margin: 4px 0;
-  color: #5d2720;
-}
-
-.dropdown-content input[type="checkbox"] {
-  margin-right: 1rem;
-}
-
-.dropdown-content.show {
-  display: block;
-}
-
-.pizza-checkbox {
-  font-family: "aptly", sans-serif;
-  font-size: 1rem;
-}
-.pizza-checkbox[data-category="Veggie"] { color: #2ecc71; }
-.pizza-checkbox[data-category="Chicken"] { color: #ef5777; }
-.pizza-checkbox[data-category="Supreme"] { color: #DB5461; }
-.pizza-checkbox[data-category="Classic"] { color: #fff200; }
-
-
-
-#pizza-container {
-  width: 800px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-#pizza-filter {
-  width: 200px;
-  font-family: "aptly", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-#tooltip {
-  font-family: "aptly", sans-serif;
-  font-size: 1.3rem;
-  font-weight: 400;
-  font-style: normal;
-  position: absolute;
-  background: rgba(255, 255, 255, 0.8);
-  color: #000;
-  padding: 6px 8px;
-  border-radius: 4px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s;
-  z-index: 10;
+  font-size: 1.2rem;
+  line-height: 1rem;
+  
 }

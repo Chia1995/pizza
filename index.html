@@ -21,39 +21,40 @@
             </div>
         </div>
 
-        <div class="secondscreen">
-            <p class="textsecondscreen">
-                Ever wondered how many pizzas are sold, and when?
-                <br><br>The next playful visualization shows you
-                every single pizza sale – one dot at a time.<br><br>
-
-                Use the filter to explore by category. Click around, hover, and discover tasty trends.
-
-                Hungry for more?
-                <br><br>In the next visualization, you’ll find out which pizzas are true bestsellers.
-
+        <div id="second-screen" class="secondscreen">
+            <h3>What is your favorite</h3>
+            <h2>PIZZA?</h2>
+            <p>and how did people choose? Select up to 3.</p>
         </div>
-    </div>
-
-    <div class="filters">
-        <div class="dropdown">
-            <button id="category-btn">Filter by category ▾</button>
-            <div id="category-checkboxes" class="dropdown-content"></div>
+        <div class="secondscreensbuttonsection">
+            <div id="pizza-buttons"></div>
+            <div class="button-container">
+                <button id="complete-selection" class="button-56">
+                    Curious? Press the button here to find out!
+                </button>
+            </div>
+            <div class="resultsection">
+                <div id="selection-message" ></div>
+            </div>
         </div>
 
-        <div class="dropdown">
-            <button id="pizza-btn">Filter by pizza ▾</button>
-            <div id="pizza-checkboxes" class="dropdown-content"></div>
-        </div>
-    </div>
 
-    <div id="pizza-container">
-        <svg id="pizza-viz" width="900" height="900"></svg>
-    </div>
 
-    <div id="tooltip"></div>
+
+
+        <div class="thirdscreen"></div>
+        <div class="fourthscreen"></div>
+        <div class="fifthscreen"></div>
+
+
+
+    </div>
 
     <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/secondscreen.js"></script>
+    <script type="module" src="/src/thirdscreen.js"></script>
+    <script type="module" src="/src/fourthscreen.js"></script>
+    <script type="module" src="/src/fifthscreen.js"></script>
 </body>
 
 </html>
