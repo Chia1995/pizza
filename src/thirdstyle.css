@@ -32,7 +32,7 @@
     margin: 0 auto;
     width: 100%;
     height: auto;
-    max-width: 1200px;  /* Limit maximum size even on big screens */
+    max-width: 800px;  /* Limit maximum size even on big screens */
   }
 
   .thirdscreen text {
