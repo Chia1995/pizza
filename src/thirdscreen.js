@@ -44,9 +44,8 @@ export function buildThirdScreenChart() {
     });
 
     const filteredData = data.filter(d => window.selectedPizzas.includes(d.pizza_name) && d.date !== null);
-
     const selectedDates = filteredData.map(d => d.date);
-    
+
     const x = d3.scaleTime()
       .domain(d3.extent(selectedDates))
       .range([0, width]);
@@ -55,11 +54,10 @@ export function buildThirdScreenChart() {
       .domain([0, 110])
       .range([height, 0]);
 
-      const allMonths = d3.timeMonths(
-        d3.timeMonth.floor(d3.min(selectedDates)),
-        d3.timeMonth.ceil(d3.max(selectedDates))
-      );
-      
+    const allMonths = d3.timeMonths(
+      d3.timeMonth.floor(d3.min(selectedDates)),
+      d3.timeMonth.ceil(d3.max(selectedDates))
+    );
 
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
@@ -110,18 +108,23 @@ export function buildThirdScreenChart() {
       })
       .attr('stroke-width', 2)
       .attr('d', d => line(d.values))
-      .on('click', function () {
-        svg.selectAll('.pizza-line')
-          .attr('stroke-opacity', 0.1)
-          .attr('stroke-width', 2);
+      .on('click', function(event, d) {
+        event.stopPropagation();
 
-        d3.select(this)
-          .attr('stroke-opacity', 1)
-          .attr('stroke-width', 4);
+        const isSelected = d3.select(this.parentNode).classed('selected-group');
+
+        svg.selectAll('.line-group')
+          .classed('selected-group', false);
+
+        if (!isSelected) {
+          d3.select(this.parentNode).classed('selected-group', true);
+        }
+
+        updateStyles();
       });
 
     groups.selectAll('.dot')
-      .data(d => d.values.filter(v => v.date !== null))
+      .data(d => d.values)
       .enter()
       .append('circle')
       .attr('class', 'dot')
@@ -134,14 +137,71 @@ export function buildThirdScreenChart() {
         const category = data.find(p => p.pizza_name === pizza.name)?.pizza_category;
         return categoryColors[category] || '#999';
       })
-      .on('mouseover', (event, d) => {
+      .on('mouseover', function(event, d) {
+        const parentGroup = d3.select(this.parentNode);
+        if (!svg.selectAll('.selected-group').empty() && !parentGroup.classed('selected-group')) {
+          return; // no tooltip for grayed-out
+        }
+
+        const pizza = lineData.find(l => l.values.includes(d));
         tooltip.transition().duration(200).style('opacity', 1);
-        tooltip.html(`${d3.timeFormat('%B %Y')(d.date)}<br/>Sold: ${d.total}`)
+        tooltip.html(`<strong>${pizza.name}</strong><br/>${d3.timeFormat('%B %Y')(d.date)}<br/>Sold: ${d.total}`)
           .style('left', `${event.pageX + 10}px`)
           .style('top', `${event.pageY - 20}px`);
       })
       .on('mouseout', () => {
         tooltip.transition().duration(200).style('opacity', 0);
+      })
+      .on('click', function(event, d) {
+        event.stopPropagation();
+        const parentGroup = d3.select(this.parentNode);
+        const isSelected = parentGroup.classed('selected-group');
+
+        svg.selectAll('.line-group').classed('selected-group', false);
+
+        if (!isSelected) {
+          parentGroup.classed('selected-group', true);
+        }
+
+        updateStyles();
       });
+
+    // Clicking empty space resets selection
+    svg.on('click', () => {
+      svg.selectAll('.line-group').classed('selected-group', false);
+      tooltip.transition().duration(200).style('opacity', 0);
+      updateStyles();
+    });
+
+    function updateStyles() {
+      if (svg.selectAll('.selected-group').empty()) {
+        // No selection: all normal
+        svg.selectAll('.pizza-line')
+          .attr('stroke-opacity', 1)
+          .attr('stroke-width', 2);
+
+        svg.selectAll('.dot')
+          .attr('opacity', 1);
+      } else {
+        svg.selectAll('.line-group').each(function() {
+          const group = d3.select(this);
+          if (group.classed('selected-group')) {
+            group.select('.pizza-line')
+              .attr('stroke-opacity', 1)
+              .attr('stroke-width', 4);
+
+            group.selectAll('.dot')
+              .attr('opacity', 1);
+          } else {
+            group.select('.pizza-line')
+              .attr('stroke-opacity', 0.1)
+              .attr('stroke-width', 2);
+
+            group.selectAll('.dot')
+              .attr('opacity', 0.1);
+          }
+        });
+      }
+    }
   });
 }
