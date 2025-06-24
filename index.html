@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <title>Pizza sales visualization</title>
     <link rel="stylesheet" href="/src/style.css" />
+    <link rel="stylesheet" href="/src/thirdstyle.css" />
 </head>
 
 <body>
@@ -26,27 +27,34 @@
             <h2>PIZZA?</h2>
             <p>and how did people choose? Select up to 3.</p>
         </div>
+        
         <div class="secondscreensbuttonsection">
             <div id="pizza-buttons"></div>
             <div class="button-container">
-                <button id="complete-selection" class="bn54">
-                    <span class="bn54span">Curious? Press the button to find out!</span>
+                <button id="complete-selection" class="button-56">
+                    Curious? Press the button here to find out!
                 </button>
             </div>
-
-            <div id="selection-message"></div>
+            <div class="resultsection">
+                <div id="selection-message" ></div>
+            </div>
         </div>
 
+        <div class="thirdscreen-container" style="display: none;">
+            <div class="thirdscreen-header" style="text-align: center; color: #fff;">
+              <h3>Were your favorites always</h3>
+              <h2>POPULAR?</h2>
+              <p>or did they have ups and downs?</p>
+            </div>
+            <div class="thirdscreen"></div>
+          </div>
+          
+          
+          
 
 
-
-
-        <div class="thirdscreen"></div>
         <div class="fourthscreen"></div>
         <div class="fifthscreen"></div>
-
-
-
     </div>
 
     <script type="module" src="/src/main.js"></script>
