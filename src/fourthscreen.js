@@ -69,17 +69,20 @@ d3.csv('/data/pizza_sales.csv').then(data => {
   if (top3.length === 0) {
     d3.select('.top-3-list').html('<p>No data for today in the dataset.</p>');
   } else {
-    const max = d3.max(top3, d => d[1]);
-
     const maxValue = Math.max(...top3.map(d => d[1]));
+    const maxContainerWidth = 500; // ширина самого длинного бара в пикселях
 
-d3.select('.top-3-list').html(
-  top3.map(([name, value]) => `
-    <div class="bar-container">
-      <div class="bar-label">${name}</div>
-      <div class="bar" style="width: ${(value / maxValue) * 100}%">${value} sold</div>
-    </div>
-  `).join('')
-);
+    d3.select('.top-3-list').html(
+      top3.map(([name, value]) => {
+        const containerWidth = (value / maxValue) * maxContainerWidth;
+
+        return `
+          <div class="bar-container" style="width: ${containerWidth}px;">
+            <div class="bar-label">${name}</div>
+            <div class="bar">${value} sold</div>
+          </div>
+        `;
+      }).join('')
+    );
   }
 });
