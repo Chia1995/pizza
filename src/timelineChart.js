@@ -7,7 +7,7 @@ const categoryColors = {
   'Classic': '#ba0707'
 };
 
-export function drawTimelineChart(data, selected, containerSelector) {
+export function drawTimelineChart(data, selected, containerSelector, isCategory = false) {
   d3.select(containerSelector).html(""); // clear old chart
 
   const parseDate = d3.timeParse('%m/%d/%Y');
@@ -18,52 +18,45 @@ export function drawTimelineChart(data, selected, containerSelector) {
 
   let lineData;
 
-  const isCategoryMode = data.some(d => selected.includes(d.pizza_category));
-
-  if (isCategoryMode) {
-    // Handle multiple categories
-    lineData = selected.map(category => {
-      const filtered = data.filter(d => d.pizza_category === category && d.date !== null);
-
-      const monthlyTotals = d3.rollups(
-        filtered,
-        v => d3.sum(v, d => d.quantity),
-        d => d3.timeMonth(d.date)
-      ).map(([date, total]) => ({ date, total }))
-        .sort((a, b) => d3.ascending(a.date, b.date));
-
-      return { name: category, values: monthlyTotals };
-    });
-  } else {
-    // Handle multiple pizzas
-    if (!selected || selected.length === 0) return;
-
-    const filtered = data.filter(
-      d => selected.includes(d.pizza_name) && d.date !== null
+  if (isCategory) {
+    // Group by month and category
+    const filtered = data.filter(d => selected.includes(d.pizza_category) && d.date !== null);
+    const grouped = d3.rollups(
+      filtered,
+      v => d3.sum(v, d => d.quantity),
+      d => d.pizza_category,
+      d => d3.timeMonth(d.date)
     );
 
-    const nested = d3.rollups(
+    lineData = grouped.map(([name, values]) => ({
+      name,
+      values: values.map(([date, total]) => ({ date, total })).sort((a, b) => d3.ascending(a.date, b.date))
+    }));
+
+  } else {
+    if (!selected || selected.length === 0) return;
+
+    const filtered = data.filter(d => selected.includes(d.pizza_name) && d.date !== null);
+
+    const grouped = d3.rollups(
       filtered,
       v => d3.sum(v, d => d.quantity),
       d => d.pizza_name,
       d => d3.timeMonth(d.date)
     );
 
-    lineData = nested.map(([name, values]) => ({
+    lineData = grouped.map(([name, values]) => ({
       name,
-      values: values
-        .map(([date, total]) => ({ date, total }))
-        .filter(d => d.date !== null)
-        .sort((a, b) => d3.ascending(a.date, b.date))
+      values: values.map(([date, total]) => ({ date, total })).sort((a, b) => d3.ascending(a.date, b.date))
     }));
   }
 
-  if (!lineData || lineData.length === 0 || lineData[0].values.length === 0) {
+  if (!lineData || lineData.length === 0 || lineData.every(l => l.values.length === 0)) {
     console.warn("No data to draw timeline.");
     return;
   }
 
-  const margin = { top: 10, right: 20, bottom: 50, left: 40 };
+  const margin = { top: 50, right: 20, bottom: 50, left: 40 };
   const width = 600 - margin.left - margin.right;
   const height = 350 - margin.top - margin.bottom;
 
@@ -87,34 +80,61 @@ export function drawTimelineChart(data, selected, containerSelector) {
 
   svg.append('g')
     .attr('transform', `translate(0,${height})`)
-    .call(d3.axisBottom(x).tickFormat(d3.timeFormat('%b')));
+    .call(d3.axisBottom(x).tickFormat(d3.timeFormat('%b')))
+    .selectAll("text")
+    .style("fill", "#5d2720")
+    .style("font-family", "aptly, sans-serif")
+    .style("font-size", "1rem");
 
   svg.append('g')
-    .call(d3.axisLeft(y).ticks(4));
+    .call(d3.axisLeft(y).ticks(4))
+    .selectAll("text")
+    .style("fill", "#5d2720")
+    .style("font-family", "aptly, sans-serif")
+    .style("font-size", "1rem");
 
   svg.selectAll(".domain, .tick line")
     .style("stroke", "#5d2720")
     .style("stroke-width", 1.5);
 
-  svg.selectAll(".tick text")
-    .style("fill", "#5d2720")
-    .style("font-family", "aptly, sans-serif")
-    .style("font-size", "1.2rem");
-
   const line = d3.line()
     .x(d => x(d.date))
     .y(d => y(d.total));
 
-  svg.selectAll('.line')
+  const tooltip = d3.select("#tooltip");
+
+  svg.selectAll('.line-path')
     .data(lineData)
     .enter()
     .append('path')
+    .attr('class', 'line-path')
     .attr('fill', 'none')
     .attr('stroke', d => {
-      if (isCategoryMode) return categoryColors[d.name] || 'steelblue';
-      const category = data.find(p => p.pizza_name === d.name)?.pizza_category;
+      const category = isCategory ? d.name : data.find(p => p.pizza_name === d.name)?.pizza_category;
       return categoryColors[category] || 'steelblue';
     })
     .attr('stroke-width', 2)
     .attr('d', d => line(d.values));
+
+  svg.selectAll(".dot")
+    .data(lineData.flatMap(d => d.values.map(v => ({ ...v, name: d.name }))))
+    .enter()
+    .append("circle")
+    .attr("cx", d => x(d.date))
+    .attr("cy", d => y(d.total))
+    .attr("r", 4)
+    .attr("fill", d => {
+      const category = isCategory ? d.name : data.find(p => p.pizza_name === d.name)?.pizza_category;
+      return categoryColors[category] || "steelblue";
+    })
+    .on("mouseover", function (event, d) {
+      tooltip.transition().duration(200).style("opacity", 0.9);
+      tooltip
+        .html(`<strong>${d.name}</strong><br>${d3.timeFormat("%B")(d.date)}<br>${d.total} sold`)
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", function () {
+      tooltip.transition().duration(300).style("opacity", 0);
+    });
 }

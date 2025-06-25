@@ -23,6 +23,23 @@
   flex-wrap: wrap; /* Responsive for smaller screens */
 }
 
+.category-legend {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.category-legend div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: aptly, sans-serif;
+  color: white;
+  font-size: 1rem;
+}
+
+
 .bubble-section.animate-shift {
   transform: translateX(-150px);
   transition: transform 0.8s ease;

@@ -58,6 +58,33 @@ export function buildFifthScreen() {
       }))
     };
 
+    const legend = d3.select("#packed-circle-chart")
+      .insert("div", ":first-child")
+      .attr("class", "category-legend")
+      .style("display", "flex")
+      .style("justify-content", "center")
+      .style("gap", "30px")
+      .style("margin-bottom", "20px");
+
+    Object.entries(categoryColors).forEach(([category, color]) => {
+      const item = legend.append("div")
+        .style("display", "flex")
+        .style("align-items", "center")
+        .style("gap", "8px");
+
+      item.append("div")
+        .style("width", "15px")
+        .style("height", "15px")
+        .style("border-radius", "50%")
+        .style("background-color", color);
+
+      item.append("span")
+        .style("color", "white")
+        .style("font-family", "aptly, sans-serif")
+        .style("font-size", "1rem")
+        .text(category);
+    });
+
     const root = d3.hierarchy(hierarchyData).sum(d => d.value).sort((a, b) => b.value - a.value);
     const pack = d3.pack().size([width, height]).padding(5);
     const packedRoot = pack(root);
@@ -71,10 +98,11 @@ export function buildFifthScreen() {
     const circles = node.append("circle")
       .attr("r", d => d.r)
       .attr("fill", d => {
-        if (d.depth === 1) return "none";
+        if (d.depth === 1) return categoryColors[d.data.name] || "#ccc";
         if (d.depth === 2) return categoryColors[d.data.category] || "#ccc";
         return "none";
       })
+      .style("fill-opacity", d => d.depth === 1 ? 0.1 : 1)
       .attr("stroke", d => {
         if (d.depth === 1) return categoryColors[d.data.name] || "#ccc";
         return "none";
@@ -102,13 +130,12 @@ export function buildFifthScreen() {
           if (selectedCategories.length === 0) selectionMode = null;
           updateVisuals(processedData, pizzaCategories);
         }
-
         event.stopPropagation();
       })
       .on("mouseover", function (event, d) {
         if ((d.depth === 2 && selectionMode !== 'category') ||
             (d.depth === 1 && selectionMode !== 'pizza')) {
-          d3.select(this).style("opacity", 1);
+          d3.select(this).style("opacity", 1).attr("stroke-width", 2);
         }
       })
       .on("mouseout", function (event, d) {
@@ -117,7 +144,9 @@ export function buildFifthScreen() {
           const isSelectedPizza = selectedPizzas.includes(d.data.name);
           const isSelectedCategory = selectedCategories.includes(d.data.name);
           if (!isSelectedPizza && !isSelectedCategory) {
-            d3.select(this).style("opacity", 0.4);
+            d3.select(this)
+              .style("opacity", 0.4)
+              .attr("stroke-width", d.depth === 1 ? 1 : 0);
           }
         }
       });
@@ -169,7 +198,19 @@ export function buildFifthScreen() {
           d3.select(".bubble-section").classed("animate-shift", true);
           d3.select(".side-charts").classed("visible", true);
           updateBarChart(filtered, pizzaCategories, false);
-          drawTimelineChart(processedData, selectedPizzas, "#timeline-chart");
+          if (selectionMode === 'pizza') {
+  const filtered = processedData.filter(row => selectedPizzas.includes(row.pizza_name));
+  if (filtered.length > 0) {
+    d3.select(".bubble-section").classed("animate-shift", true);
+    d3.select(".side-charts").classed("visible", true);
+    updateBarChart(filtered, pizzaCategories, false);
+    drawTimelineChart(processedData, selectedPizzas, "#timeline-chart", false); // 👈 CHANGED
+  } else {
+    drawEmptyBarChart();
+    d3.select("#timeline-chart").html("");
+  }
+}
+
         } else {
           drawEmptyBarChart();
           d3.select("#timeline-chart").html("");
@@ -180,9 +221,7 @@ export function buildFifthScreen() {
           d3.select(".bubble-section").classed("animate-shift", true);
           d3.select(".side-charts").classed("visible", true);
           updateBarChart(filtered, pizzaCategories, true);
-
-          drawTimelineChart(processedData, selectedCategories, "#timeline-chart");
-
+          drawTimelineChart(processedData, selectedCategories, "#timeline-chart", true);
         } else {
           drawEmptyBarChart();
           d3.select("#timeline-chart").html("");
@@ -256,6 +295,8 @@ function updateBarChart(data, pizzaCategories, isCategoryMode = false) {
     .style("text-anchor", "middle")
     .style("font-size", "1rem");
 
+  const tooltip = d3.select("#tooltip");
+
   svg.selectAll("rect")
     .data(totals)
     .enter()
@@ -264,7 +305,18 @@ function updateBarChart(data, pizzaCategories, isCategoryMode = false) {
     .attr("y", d => y(d.quantity))
     .attr("width", x.bandwidth())
     .attr("height", d => height - y(d.quantity))
-    .attr("fill", d => categoryColors[d.category] || "#ccc");
+    .attr("fill", d => categoryColors[d.category] || "#ccc")
+    .on("mouseover", function(event, d) {
+      tooltip.style("opacity", 1)
+             .html(`<strong>${d.name}</strong><br>Total Sales: ${d.quantity}`);
+    })
+    .on("mousemove", function(event) {
+      tooltip.style("left", (event.pageX + 10) + "px")
+             .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", function() {
+      tooltip.style("opacity", 0);
+    });
 
   svg.selectAll("text")
     .style("font-family", "aptly, sans-serif")
