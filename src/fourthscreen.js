@@ -11,20 +11,18 @@ export function buildFourthScreen() {
   // Clear previous content if reloading
   const container = d3.select('.fourthscreen')
     .html('') // clear old content
-    .style('flex-direction', 'column')
-    .style('align-items', 'center')
-    .style('text-align', 'center')
-    .style('margin-top', '5rem');
 
+    const content = container.append('div')
+  .attr('class', 'fourthscreen-content');
   // Header text above card
-  container.append('h3').text('All these');
-  container.append('h2').text('PIZZA');
-  container.append('p').text('facts got you HUNGRY? Not sure what to pick?');
-  container.append('p').html('Let’s see the top 3 slices people couldn’t resist on a day like today!')
+  content.append('h3').text('All these');
+  content.append('h2').text('PIZZA');
+  content.append('p').text('facts got you HUNGRY? Not sure what to pick?');
+  content.append('p').html('Let’s see the top 3 slices people couldn’t resist on a day like today!')
   .style('font-size', '2rem');
 
   // Flip card setup
-  const card = container.append('div')
+  const card = content.append('div')
     .attr('class', 'flip-card')
     .style('margin-top', '1rem');
 

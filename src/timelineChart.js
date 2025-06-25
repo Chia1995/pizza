@@ -7,6 +7,8 @@ const categoryColors = {
   'Classic': '#ba0707'
 };
 
+let activeLineName = null;
+
 export function drawTimelineChart(data, selected, containerSelector, isCategory = false) {
   d3.select(containerSelector).html(""); // clear old chart
 
@@ -19,7 +21,6 @@ export function drawTimelineChart(data, selected, containerSelector, isCategory 
   let lineData;
 
   if (isCategory) {
-    // Group by month and category
     const filtered = data.filter(d => selected.includes(d.pizza_category) && d.date !== null);
     const grouped = d3.rollups(
       filtered,
@@ -37,7 +38,6 @@ export function drawTimelineChart(data, selected, containerSelector, isCategory 
     if (!selected || selected.length === 0) return;
 
     const filtered = data.filter(d => selected.includes(d.pizza_name) && d.date !== null);
-
     const grouped = d3.rollups(
       filtered,
       v => d3.sum(v, d => d.quantity),
@@ -57,7 +57,7 @@ export function drawTimelineChart(data, selected, containerSelector, isCategory 
   }
 
   const margin = { top: 50, right: 20, bottom: 50, left: 40 };
-  const width = 600 - margin.left - margin.right;
+  const width = 800 - margin.left - margin.right;
   const height = 350 - margin.top - margin.bottom;
 
   const svg = d3.select(containerSelector)
@@ -66,6 +66,17 @@ export function drawTimelineChart(data, selected, containerSelector, isCategory 
     .attr('height', height + margin.top + margin.bottom)
     .append('g')
     .attr('transform', `translate(${margin.left},${margin.top})`);
+
+  // Add this AFTER svg is created
+  svg.append("rect")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("fill", "transparent")
+    .lower()
+    .on("click", () => {
+      activeLineName = null;
+      updateLines();
+    });
 
   const allDates = lineData.flatMap(d => d.values.map(p => p.date));
   const allTotals = lineData.flatMap(d => d.values.map(p => p.total));
@@ -95,7 +106,7 @@ export function drawTimelineChart(data, selected, containerSelector, isCategory 
 
   svg.selectAll(".domain, .tick line")
     .style("stroke", "#5d2720")
-    .style("stroke-width", 1.5);
+    .style("stroke-width", 1);
 
   const line = d3.line()
     .x(d => x(d.date))
@@ -103,7 +114,7 @@ export function drawTimelineChart(data, selected, containerSelector, isCategory 
 
   const tooltip = d3.select("#tooltip");
 
-  svg.selectAll('.line-path')
+  const paths = svg.selectAll('.line-path')
     .data(lineData)
     .enter()
     .append('path')
@@ -114,12 +125,19 @@ export function drawTimelineChart(data, selected, containerSelector, isCategory 
       return categoryColors[category] || 'steelblue';
     })
     .attr('stroke-width', 2)
-    .attr('d', d => line(d.values));
+    .attr('d', d => line(d.values))
+    .style("cursor", "pointer")
+    .on("click", function (event, d) {
+      event.stopPropagation();
+      activeLineName = activeLineName === d.name ? null : d.name;
+      updateLines();
+    });
 
-  svg.selectAll(".dot")
+  const dots = svg.selectAll(".dot")
     .data(lineData.flatMap(d => d.values.map(v => ({ ...v, name: d.name }))))
     .enter()
     .append("circle")
+    .attr("class", "dot")
     .attr("cx", d => x(d.date))
     .attr("cy", d => y(d.total))
     .attr("r", 4)
@@ -127,14 +145,32 @@ export function drawTimelineChart(data, selected, containerSelector, isCategory 
       const category = isCategory ? d.name : data.find(p => p.pizza_name === d.name)?.pizza_category;
       return categoryColors[category] || "steelblue";
     })
+    .style("cursor", "pointer")
+    .on("click", function (event, d) {
+      event.stopPropagation();
+      activeLineName = activeLineName === d.name ? null : d.name;
+      updateLines();
+    })
     .on("mouseover", function (event, d) {
-      tooltip.transition().duration(200).style("opacity", 0.9);
-      tooltip
-        .html(`<strong>${d.name}</strong><br>${d3.timeFormat("%B")(d.date)}<br>${d.total} sold`)
-        .style("left", (event.pageX + 10) + "px")
-        .style("top", (event.pageY - 28) + "px");
+      if (!activeLineName || d.name === activeLineName) {
+        tooltip.transition().duration(200).style("opacity", 0.9);
+        tooltip
+          .html(`<strong>${d.name}</strong><br>${d3.timeFormat("%B")(d.date)}<br>${d.total} sold`)
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 28) + "px");
+      }
     })
     .on("mouseout", function () {
       tooltip.transition().duration(300).style("opacity", 0);
     });
+
+  function updateLines() {
+    svg.selectAll(".line-path")
+      .attr("stroke-opacity", d => !activeLineName || d.name === activeLineName ? 1 : 0.2);
+
+    svg.selectAll(".dot")
+      .attr("opacity", d => !activeLineName || d.name === activeLineName ? 1 : 0.2);
+  }
+
+  updateLines();
 }
