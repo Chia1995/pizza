@@ -146,7 +146,7 @@ export function buildThirdScreenChart() {
       })
       .attr('stroke-width', 3)
       .attr('d', d => line(d.values))
-      .on('click', function(event, d) {
+      .on('click', function (event, d) {
         event.stopPropagation();
 
         const isSelected = d3.select(this.parentNode).classed('selected-group');
@@ -172,7 +172,7 @@ export function buildThirdScreenChart() {
         const category = data.find(p => p.pizza_name === pizza.name)?.pizza_category;
         return categoryColors[category] || '#999';
       })
-      .on('mouseover', function(event, d) {
+      .on('mouseover', function (event, d) {
         const parentGroup = d3.select(this.parentNode);
         if (!svg.selectAll('.selected-group').empty() && !parentGroup.classed('selected-group')) {
           return;
@@ -187,7 +187,7 @@ export function buildThirdScreenChart() {
       .on('mouseout', () => {
         tooltip.transition().duration(200).style('opacity', 0);
       })
-      .on('click', function(event, d) {
+      .on('click', function (event, d) {
         event.stopPropagation();
         const parentGroup = d3.select(this.parentNode);
         const isSelected = parentGroup.classed('selected-group');
@@ -215,7 +215,7 @@ export function buildThirdScreenChart() {
         svg.selectAll('.dot')
           .attr('opacity', 1);
       } else {
-        svg.selectAll('.line-group').each(function() {
+        svg.selectAll('.line-group').each(function () {
           const group = d3.select(this);
           if (group.classed('selected-group')) {
             group.select('.pizza-line')
@@ -234,5 +234,11 @@ export function buildThirdScreenChart() {
       }
     }
     buildFourthScreen();
+
+    // Reveal the fifth screen
+    const fifth = d3.select('.fifthscreen');
+    fifth.style('display', 'block');
+    setTimeout(() => fifth.classed('show', true), 10);
+
   });
 }

@@ -6,7 +6,8 @@
     <title>Pizza sales visualization</title>
     <link rel="stylesheet" href="/src/style.css" />
     <link rel="stylesheet" href="/src/thirdstyle.css" />
-      <link rel="stylesheet" href="/src/fourthscreen.css" />
+    <link rel="stylesheet" href="/src/fourthscreen.css" />
+    <link rel="stylesheet" href="/src/fifthscreen.css" />
 </head>
 
 <body>
@@ -28,7 +29,7 @@
             <h2>PIZZA?</h2>
             <p>and how did people choose? Select up to 3.</p>
         </div>
-        
+
         <div class="secondscreensbuttonsection">
             <div id="pizza-buttons"></div>
             <div class="button-container">
@@ -37,25 +38,47 @@
                 </button>
             </div>
             <div class="resultsection">
-                <div id="selection-message" ></div>
+                <div id="selection-message"></div>
             </div>
         </div>
 
         <div class="thirdscreen-container" style="display: none;">
             <div class="thirdscreen-header" style="text-align: center; color: #fff;">
-              <h3>Were your favorites always</h3>
-              <h2>POPULAR?</h2>
-              <p>or did they have ups and downs?</p>
+                <h3>Were your favorites always</h3>
+                <h2>POPULAR?</h2>
+                <p>or did they have ups and downs?</p>
             </div>
             <div class="thirdscreen"></div>
-          </div>
-          
-          
-          
-
+        </div>
 
         <div class="fourthscreen"></div>
-        <div class="fifthscreen"></div>
+
+        <div class="fifthstartscreen">
+            <h3>Think you've seen it all?</h3>
+            <p> Not it's your turn. Dive in and explore the whole</p>
+            <h2>PIZZA</h2>
+            <h3>universe!</h3>
+        </div>
+
+        <div class="fifthscreen-content">
+            <div class="bubble-section">
+                <div id="packed-circle-chart"></div>
+                <p id="bubble-hint" class="bubble-hint">Click pizza bubbles to compare.</p>
+            </div>
+            <div class="side-charts">
+                <div id="bar-chart"></div>
+                <div id="timeline-chart"></div>
+            </div>
+            
+        </div>
+
+    
+
+
+
+
+
+
     </div>
 
     <script type="module" src="/src/main.js"></script>

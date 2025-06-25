@@ -1,5 +1,7 @@
 /* Make sure there's no background */
 .fourthscreen {
+  display: none;
+  height: 100vh;
   background: transparent;
   padding: 4rem 2rem;
   font-family: 'aptly', sans-serif; /* assuming aptly is used elsewhere */

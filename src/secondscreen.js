@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { buildThirdScreenChart } from './thirdscreen.js';
+import { buildFourthScreen } from './fourthscreen.js';
 
 const categoryColors = {
   'Veggie': '#024702',
@@ -94,9 +95,13 @@ d3.csv('/data/pizza_sales.csv').then(data => {
 
     // Show the thirdscreen section (was hidden initially)
     d3.select('.thirdscreen-container').style('display', 'block');
+    d3.select('.fourthscreen').style('display', 'block');
+    d3.select('.fifthstartscreen').style('display', 'block');
+    d3.select('.fifthscreen-content').style('display', 'flex');
 
 
     // Build the timeline chart
     buildThirdScreenChart();
+     buildFourthScreen();
   });
 });

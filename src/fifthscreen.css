@@ -1,0 +1,46 @@
+.fifthstartscreen {
+  display: none;
+  width: 100%;
+  text-align: center;
+  margin-top: 5rem;
+  color: white;
+  font-family: 'aptly', sans-serif
+}
+
+#bubble-hint {
+  display: none;
+}
+
+
+.fifthscreen-content {
+  display: flex;
+  height: 100vw;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  padding: 40px;
+  flex-wrap: wrap; /* Responsive for smaller screens */
+}
+
+.bubble-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#packed-circle-chart svg {
+  max-width: 100%;
+  height: auto;
+}
+
+#bar-chart svg {
+  max-width: 100%;
+  height: auto;
+}
+
+#bubble-hint {
+  margin-top: 20px;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+}
