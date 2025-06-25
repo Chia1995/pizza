@@ -2,8 +2,6 @@ import * as d3 from 'd3';
 import { drawTimelineChart } from './timelineChart.js';
 import { buildFourthScreen } from './fourthscreen.js';
 
-
-
 const categoryColors = {
   'Veggie': '#024702',
   'Chicken': '#0b159c',
@@ -12,6 +10,8 @@ const categoryColors = {
 };
 
 let selectedPizzas = [];
+let selectedCategories = [];
+let selectionMode = null;
 
 export function buildFifthScreen() {
   const width = 800;
@@ -25,7 +25,6 @@ export function buildFifthScreen() {
     .attr("transform", `translate(${width / 2}, ${height / 2})`);
 
   d3.csv('/data/pizza_sales.csv').then(data => {
-    console.log("✅ buildFifthScreen started");
     const parseDate = d3.timeParse('%m/%d/%Y');
 
     const processedData = data.map(d => ({
@@ -69,7 +68,7 @@ export function buildFifthScreen() {
       .append("g")
       .attr("transform", d => `translate(${d.x - width / 2},${d.y - height / 2})`);
 
-    node.append("circle")
+    const circles = node.append("circle")
       .attr("r", d => d.r)
       .attr("fill", d => {
         if (d.depth === 1) return "none";
@@ -81,59 +80,118 @@ export function buildFifthScreen() {
         return "none";
       })
       .attr("stroke-width", d => d.depth === 1 ? 1 : 0)
-      .style("cursor", d => d.depth === 2 ? "pointer" : "default")
+      .style("cursor", d => d.depth > 0 ? "pointer" : "default")
+      .style("opacity", 0.4)
       .on("click", function (event, d) {
-        if (d.depth !== 2) return;
-
-        const pizzaName = d.data.name;
-        const index = selectedPizzas.indexOf(pizzaName);
-        if (index === -1) selectedPizzas.push(pizzaName);
-        else selectedPizzas.splice(index, 1);
-
-        window.selectedPizzas = selectedPizzas;
-
-        const selectedData = processedData.filter(row => selectedPizzas.includes(row.pizza_name));
-
-        if (selectedPizzas.length === 0) {
-          drawEmptyBarChart();
-          d3.select("#timeline-chart").html("");
-        } else {
-          updateBarChart(selectedData, pizzaCategories);
-          drawTimelineChart(processedData, selectedPizzas, "#timeline-chart");
+        if (d.depth === 2) {
+          if (selectionMode === 'category') return;
+          selectionMode = 'pizza';
+          const name = d.data.name;
+          const index = selectedPizzas.indexOf(name);
+          if (index === -1) selectedPizzas.push(name);
+          else selectedPizzas.splice(index, 1);
+          if (selectedPizzas.length === 0) selectionMode = null;
+          updateVisuals(processedData, pizzaCategories);
+        } else if (d.depth === 1) {
+          if (selectionMode === 'pizza') return;
+          selectionMode = 'category';
+          const name = d.data.name;
+          const index = selectedCategories.indexOf(name);
+          if (index === -1) selectedCategories.push(name);
+          else selectedCategories.splice(index, 1);
+          if (selectedCategories.length === 0) selectionMode = null;
+          updateVisuals(processedData, pizzaCategories);
         }
 
         event.stopPropagation();
+      })
+      .on("mouseover", function (event, d) {
+        if ((d.depth === 2 && selectionMode !== 'category') ||
+            (d.depth === 1 && selectionMode !== 'pizza')) {
+          d3.select(this).style("opacity", 1);
+        }
+      })
+      .on("mouseout", function (event, d) {
+        if ((d.depth === 2 && selectionMode !== 'category') ||
+            (d.depth === 1 && selectionMode !== 'pizza')) {
+          const isSelectedPizza = selectedPizzas.includes(d.data.name);
+          const isSelectedCategory = selectedCategories.includes(d.data.name);
+          if (!isSelectedPizza && !isSelectedCategory) {
+            d3.select(this).style("opacity", 0.4);
+          }
+        }
       });
 
-    const pizzaText = node.filter(d => d.depth === 2)
+    node.filter(d => d.depth === 2)
       .append("text")
       .attr("text-anchor", "middle")
       .style("fill", "#fff")
       .style("font-family", "aptly, sans-serif")
       .style("pointer-events", "none")
-      .style("font-size", d => {
-        const size = Math.max(Math.min(d.r / 4, 14), 12);
-        return `${size}px`;
+      .style("font-size", d => `${Math.max(Math.min(d.r / 4, 14), 12)}px`)
+      .each(function (d) {
+        const lines = d.data.name.split(/(?=[A-Z])|\s+/);
+        const lineHeight = 1.1;
+        const totalLines = lines.length;
+        const startDy = -((totalLines - 1) / 2) * lineHeight;
+
+        const text = d3.select(this);
+        text.selectAll("tspan")
+          .data(lines)
+          .enter()
+          .append("tspan")
+          .text(line => line)
+          .attr("x", 0)
+          .attr("dy", (_, i) => `${i === 0 ? startDy : lineHeight}em`);
       });
-
-    pizzaText.each(function (d) {
-      const lines = d.data.name.split(/(?=[A-Z])|\s+/);
-      const lineHeight = 1.1;
-      const totalLines = lines.length;
-      const startDy = -((totalLines - 1) / 2) * lineHeight;
-
-      const text = d3.select(this);
-      text.selectAll("tspan")
-        .data(lines)
-        .enter()
-        .append("tspan")
-        .text(line => line)
-        .attr("x", 0)
-        .attr("dy", (_, i) => `${i === 0 ? startDy : lineHeight}em`);
-    });
 
     drawEmptyBarChart();
     d3.select("#timeline-chart").html("");
+
+    function updateVisuals(processedData, pizzaCategories) {
+      node.selectAll("circle")
+        .style("opacity", d => {
+          if (d.depth === 1) {
+            return (selectionMode === 'category' && selectedCategories.includes(d.data.name)) ? 1 : 0.4;
+          }
+          if (d.depth === 2) {
+            return (selectionMode === 'pizza' && selectedPizzas.includes(d.data.name)) ? 1 : 0.4;
+          }
+          return 1;
+        });
+
+      d3.select(".bubble-section").classed("animate-shift", false);
+      d3.select(".side-charts").classed("visible", false);
+
+      if (selectionMode === 'pizza') {
+        const filtered = processedData.filter(row => selectedPizzas.includes(row.pizza_name));
+        if (filtered.length > 0) {
+          d3.select(".bubble-section").classed("animate-shift", true);
+          d3.select(".side-charts").classed("visible", true);
+          updateBarChart(filtered, pizzaCategories, false);
+          drawTimelineChart(processedData, selectedPizzas, "#timeline-chart");
+        } else {
+          drawEmptyBarChart();
+          d3.select("#timeline-chart").html("");
+        }
+      } else if (selectionMode === 'category') {
+        if (selectedCategories.length > 0) {
+          const filtered = processedData.filter(d => selectedCategories.includes(d.pizza_category));
+          d3.select(".bubble-section").classed("animate-shift", true);
+          d3.select(".side-charts").classed("visible", true);
+          updateBarChart(filtered, pizzaCategories, true);
+
+          drawTimelineChart(processedData, selectedCategories, "#timeline-chart");
+
+        } else {
+          drawEmptyBarChart();
+          d3.select("#timeline-chart").html("");
+        }
+      } else {
+        drawEmptyBarChart();
+        d3.select("#timeline-chart").html("");
+      }
+    }
   });
 }
 
@@ -141,27 +199,41 @@ function drawEmptyBarChart() {
   d3.select("#bar-chart").html("");
 }
 
-function updateBarChart(data, pizzaCategories) {
+function updateBarChart(data, pizzaCategories, isCategoryMode = false) {
   d3.select("#bar-chart").html("");
 
-  const totals = d3.rollups(
-    data,
-    v => d3.sum(v, d => d.quantity),
-    d => d.pizza_name
-  ).map(([name, quantity]) => ({
-    name,
-    quantity,
-    category: pizzaCategories[name]
-  }));
+  let totals;
+
+  if (isCategoryMode && data.length > 0) {
+    totals = d3.rollups(
+      data,
+      v => d3.sum(v, d => d.quantity),
+      d => d.pizza_category
+    ).map(([name, quantity]) => ({
+      name,
+      quantity,
+      category: name
+    }));
+  } else {
+    totals = d3.rollups(
+      data,
+      v => d3.sum(v, d => d.quantity),
+      d => d.pizza_name
+    ).map(([name, quantity]) => ({
+      name,
+      quantity,
+      category: pizzaCategories[name]
+    }));
+  }
 
   const margin = { top: 20, right: 20, bottom: 90, left: 40 };
-  const width = 600 - margin.left - margin.right;
+  const width = 800 - margin.left - margin.right;
   const height = 450 - margin.top - margin.bottom;
 
   const x = d3.scaleBand()
     .domain(totals.map(d => d.name))
     .range([0, width])
-    .padding(0.2);
+    .padding(0.3);
 
   const y = d3.scaleLinear()
     .domain([0, d3.max(totals, d => d.quantity)])
@@ -182,38 +254,6 @@ function updateBarChart(data, pizzaCategories) {
     .selectAll("text")
     .attr("transform", "rotate(0)")
     .style("text-anchor", "middle")
-    .each(function (d) {
-      const maxLineLength = 12;
-      const lines = [];
-
-      if (d.length <= maxLineLength) {
-        lines.push(d);
-      } else {
-        const words = d.split(" ");
-        let line = words[0];
-
-        for (let i = 1; i < words.length; i++) {
-          if ((line + " " + words[i]).length <= maxLineLength) {
-            line += " " + words[i];
-          } else {
-            lines.push(line);
-            line = words[i];
-            if (lines.length === 2) break;
-          }
-        }
-        if (lines.length < 2 && line) lines.push(line);
-      }
-
-      d3.select(this).text(null)
-        .selectAll("tspan")
-        .data(lines)
-        .enter()
-        .append("tspan")
-        .text(line => line)
-        .attr("x", 0)
-        .attr("dy", (_, i) => i === 0 ? "1.4em" : "1.2em");
-
-    })
     .style("font-size", "1rem");
 
   svg.selectAll("rect")

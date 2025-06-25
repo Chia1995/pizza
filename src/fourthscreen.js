@@ -11,7 +11,6 @@ export function buildFourthScreen() {
   // Clear previous content if reloading
   const container = d3.select('.fourthscreen')
     .html('') // clear old content
-    .style('display', 'flex')
     .style('flex-direction', 'column')
     .style('align-items', 'center')
     .style('text-align', 'center')

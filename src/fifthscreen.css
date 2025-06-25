@@ -4,7 +4,8 @@
   text-align: center;
   margin-top: 5rem;
   color: white;
-  font-family: 'aptly', sans-serif
+  font-family: 'aptly', sans-serif;
+  margin-bottom: 10vh;
 }
 
 #bubble-hint {
@@ -13,13 +14,18 @@
 
 
 .fifthscreen-content {
-  display: flex;
-  height: 100vw;
+  display: none;
+  height: 10vw;
   justify-content: center;
   align-items: flex-start;
-  gap: 40px;
+  gap: 10px;
   padding: 40px;
   flex-wrap: wrap; /* Responsive for smaller screens */
+}
+
+.bubble-section.animate-shift {
+  transform: translateX(-150px);
+  transition: transform 0.8s ease;
 }
 
 .bubble-section {
@@ -43,4 +49,13 @@
   color: white;
   font-size: 16px;
   text-align: center;
+}
+
+.side-charts {
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.side-charts.visible {
+  opacity: 1;
 }
