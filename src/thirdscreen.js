@@ -1,4 +1,6 @@
 import * as d3 from 'd3';
+import { buildFourthScreen } from './fourthscreen.js';
+
 
 const categoryColors = {
   'Veggie': '#024702',
@@ -231,5 +233,6 @@ export function buildThirdScreenChart() {
         });
       }
     }
+    buildFourthScreen();
   });
 }
