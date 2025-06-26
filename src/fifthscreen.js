@@ -134,13 +134,13 @@ export function buildFifthScreen() {
       })
       .on("mouseover", function (event, d) {
         if ((d.depth === 2 && selectionMode !== 'category') ||
-            (d.depth === 1 && selectionMode !== 'pizza')) {
+          (d.depth === 1 && selectionMode !== 'pizza')) {
           d3.select(this).style("opacity", 1).attr("stroke-width", 2);
         }
       })
       .on("mouseout", function (event, d) {
         if ((d.depth === 2 && selectionMode !== 'category') ||
-            (d.depth === 1 && selectionMode !== 'pizza')) {
+          (d.depth === 1 && selectionMode !== 'pizza')) {
           const isSelectedPizza = selectedPizzas.includes(d.data.name);
           const isSelectedCategory = selectedCategories.includes(d.data.name);
           if (!isSelectedPizza && !isSelectedCategory) {
@@ -189,8 +189,14 @@ export function buildFifthScreen() {
           return 1;
         });
 
-      d3.select(".bubble-section").classed("animate-shift", false);
-      d3.select(".side-charts").classed("visible", false);
+      const isAnySelected = selectedPizzas.length > 0 || selectedCategories.length > 0;
+d3.select(".bubble-section").classed("animate-shift", isAnySelected);
+
+      const sideCharts = d3.select(".side-charts");
+      sideCharts.classed("hidden", false);
+      setTimeout(() => {
+        sideCharts.classed("visible", true);
+      }, 10);
 
       if (selectionMode === 'pizza') {
         const filtered = processedData.filter(row => selectedPizzas.includes(row.pizza_name));
@@ -199,17 +205,25 @@ export function buildFifthScreen() {
           d3.select(".side-charts").classed("visible", true);
           updateBarChart(filtered, pizzaCategories, false);
           if (selectionMode === 'pizza') {
-  const filtered = processedData.filter(row => selectedPizzas.includes(row.pizza_name));
-  if (filtered.length > 0) {
-    d3.select(".bubble-section").classed("animate-shift", true);
-    d3.select(".side-charts").classed("visible", true);
-    updateBarChart(filtered, pizzaCategories, false);
-    drawTimelineChart(processedData, selectedPizzas, "#timeline-chart", false); // 👈 CHANGED
-  } else {
-    drawEmptyBarChart();
-    d3.select("#timeline-chart").html("");
-  }
-}
+            const filtered = processedData.filter(row => selectedPizzas.includes(row.pizza_name));
+            if (filtered.length > 0) {
+              d3.select(".bubble-section").classed("animate-shift", true);
+              d3.select(".side-charts").classed("visible", true);
+              updateBarChart(filtered, pizzaCategories, false);
+              drawTimelineChart(processedData, selectedPizzas, "#timeline-chart", false); // 👈 CHANGED
+            } else {
+              drawEmptyBarChart();
+              d3.select("#timeline-chart").html("");
+
+              // Reset animation and hide charts
+              d3.select(".bubble-section").classed("animate-shift", false);
+              const sideCharts = d3.select(".side-charts");
+              sideCharts.classed("visible", false);
+              setTimeout(() => {
+                sideCharts.classed("hidden", true);
+              }, 800);
+            }
+          }
 
         } else {
           drawEmptyBarChart();
@@ -265,7 +279,7 @@ function updateBarChart(data, pizzaCategories, isCategoryMode = false) {
     }));
   }
 
-  const margin = { top: 20, right: 20, bottom: 90, left: 40 };
+  const margin = { top: 20, right: 20, bottom: 90, left: 60 };
   const width = 800 - margin.left - margin.right;
   const height = 450 - margin.top - margin.bottom;
 
@@ -306,15 +320,15 @@ function updateBarChart(data, pizzaCategories, isCategoryMode = false) {
     .attr("width", x.bandwidth())
     .attr("height", d => height - y(d.quantity))
     .attr("fill", d => categoryColors[d.category] || "#ccc")
-    .on("mouseover", function(event, d) {
+    .on("mouseover", function (event, d) {
       tooltip.style("opacity", 1)
-             .html(`<strong>${d.name}</strong><br>Total Sales: ${d.quantity}`);
+        .html(`<strong>${d.name}</strong><br>Total Sales: ${d.quantity}`);
     })
-    .on("mousemove", function(event) {
+    .on("mousemove", function (event) {
       tooltip.style("left", (event.pageX + 10) + "px")
-             .style("top", (event.pageY - 28) + "px");
+        .style("top", (event.pageY - 28) + "px");
     })
-    .on("mouseout", function() {
+    .on("mouseout", function () {
       tooltip.style("opacity", 0);
     });
 

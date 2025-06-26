@@ -40,16 +40,18 @@
 }
 
 
-.bubble-section.animate-shift {
-  transform: translateX(-150px);
-  transition: transform 0.8s ease;
-}
-
 .bubble-section {
   display: flex;
   flex-direction: column;
   align-items: center;
+  transform: translateX(0); /* Default position */
+  transition: transform 0.8s ease;
 }
+
+.bubble-section.animate-shift {
+  transform: translateX(-150px);
+}
+
 
 #packed-circle-chart svg {
   max-width: 100%;
@@ -68,9 +70,14 @@
   text-align: center;
 }
 
+.side-charts.hidden {
+  display: none;
+}
+
 .side-charts {
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity 0.8s ease;
+  display: block;
 }
 
 .side-charts.visible {
